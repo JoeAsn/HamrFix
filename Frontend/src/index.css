@@ -1,0 +1,92 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: Inter, system-ui, sans-serif;
+  --color-surface: #f9f9ff;
+  --color-surface-dim: #ccdbf6;
+  --color-surface-bright: #f9f9ff;
+  --color-surface-lowest: #ffffff;
+  --color-surface-low: #f0f3ff;
+  --color-surface-container: #e7eeff;
+  --color-surface-high: #dee9ff;
+  --color-surface-highest: #d5e3ff;
+  --color-on-surface: #0d1c30;
+  --color-on-variant: #43474f;
+  --color-outline: #737780;
+  --color-outline-variant: #c3c6d0;
+  --color-primary: #00254b;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #173b67;
+  --color-on-primary-container: #86a6d8;
+  --color-secondary: #0060aa;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #66abff;
+  --color-on-secondary-container: #003f72;
+  --color-tertiary: #362000;
+  --color-tertiary-container: #533400;
+  --color-tertiary-fixed: #ffddb5;
+  --color-on-tertiary-fixed: #2a1800;
+  --color-error: #ba1a1a;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #93000a;
+  --shadow-card: 0 1px 3px rgba(23, 59, 103, 0.04), 0 4px 12px rgba(23, 59, 103, 0.03);
+  --shadow-raised: 0 4px 6px -1px rgba(23, 59, 103, 0.06), 0 10px 20px -2px rgba(23, 59, 103, 0.08);
+}
+
+@layer base {
+  html {
+    @apply min-h-full overflow-x-clip;
+  }
+
+  body {
+    @apply m-0 min-h-full bg-surface font-sans text-on-surface;
+  }
+
+  #root {
+    @apply min-h-full;
+  }
+
+  .material-symbols-outlined {
+    font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+    @apply select-none;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-secondary;
+  }
+
+  img,
+  svg,
+  video {
+    @apply max-w-full;
+  }
+
+  input,
+  select,
+  textarea,
+  button {
+    @apply max-w-full;
+    font: inherit;
+  }
+
+  /* Keep form controls at 16px on small screens to prevent iOS zoom. */
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    @apply text-base md:text-sm;
+  }
+}
+
+@layer components {
+  .interactive-control {
+    @apply transition duration-200 ease-out;
+  }
+
+  .interactive-control:hover {
+    @apply -translate-y-0.5 shadow-raised;
+  }
+
+  .interactive-control:active {
+    @apply translate-y-0;
+  }
+}
