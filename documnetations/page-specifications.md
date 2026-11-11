@@ -23,11 +23,11 @@ Service (from the listing) and a message. Success shows phone, Telegram, and the
 
 ## Register `/register`
 
-Full name, email, password (minimum 8 characters). After submit: `/account`, or `/professional/edit` when `?list=1`.
+Full name, email, password (minimum 8 characters). When reached from Create a Listing, the intended `/professional/edit` destination is preserved through `?next=`.
 
 ## Login `/login`
 
-Email and password. Supports `?next=`. `abebe@hamrfix.et` opens the dual-role demo account.
+Email and password. Supports `?next=` and returns authenticated users to the intended destination. The Create a Listing flow uses `/login?next=/professional/edit`; its Create an account link preserves the same destination.
 
 ## About `/about`
 
@@ -40,6 +40,10 @@ Household photo, name, email, phone, sub-city. A card for the professional listi
 ## Professional workspace `/professional` and `/professional/edit`
 
 Photo, profession, overview, areas, services. Edit adds or removes services and toggles sub-cities.
+
+The professional workspace uses **Create a Listing** for the listing creation action, with supporting text: “Showcase your services and reach potential customers.”
+
+Unauthenticated users enter through login or sign up and return to `/professional/edit`. Authenticated residents and professionals go directly to `/professional/edit`; selecting Professional initializes the existing professional profile when necessary.
 
 ## Not found
 

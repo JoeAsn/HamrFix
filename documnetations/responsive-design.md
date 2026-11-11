@@ -13,10 +13,10 @@ The UI is designed for a phone first. Larger layouts are added at `sm` (640px), 
 
 ## Navigation
 
-- **Phone:** logo, profile photo or Sign up, hamburger. The drawer lists primary links plus Log in (guests) or My account / Trade profile.
+- **Phone:** logo, profile photo or Sign up, hamburger. The drawer lists primary links plus Log in for guests; workspace switching and account settings are available from the profile photo menu.
 - **From 768px:** inline primary links.
 
-The account menu, including Switch accounts, opens from the profile photo at every width. The menu cannot exceed the viewport.
+The account menu, including Switch workspace, opens from the profile photo at every width. The menu shows only Resident and Professional workspaces and cannot exceed the viewport.
 
 ## Page behavior
 

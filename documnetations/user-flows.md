@@ -18,16 +18,18 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-  A[Register] --> B[Resident view]
-  B --> C[Edit household photo and details]
-  B --> D[List my trade]
+  A[Create a Listing] --> B{Signed in?}
+  B -->|No| C[Login or Sign Up]
+  C --> D[Return to /professional/edit]
+  B -->|Resident| D
+  B -->|Professional| D
   D --> E[Edit professional listing]
   E --> F[Professional view]
-  F --> G[Switch accounts from the profile photo]
-  G --> B
+  F --> G[Switch workspace from the profile photo]
+  G --> H[Resident view]
 ```
 
-Switching views does not log the person out.
+Guests preserve `/professional/edit` through the `next` query parameter. Switching views does not log the person out.
 
 ## Contact gate
 

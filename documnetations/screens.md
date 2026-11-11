@@ -70,9 +70,9 @@ Phone:
 
 ![Edit listing](ui/edit-professional.png)
 
-Switch accounts from the profile photo:
+Switch workspace from the profile photo:
 
-![Switch accounts](ui/switch-accounts.png)
+![Switch workspace](ui/switch-accounts.png)
 
 Phone:
 

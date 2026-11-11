@@ -30,19 +30,18 @@ The interface should feel like a calm civic directory: navy, cool surfaces, Inte
 A plumber who also needs an electrician is still one person. Login and register do not ask “resident or professional?”
 
 - Register asks for name, email, and password.
-- `?list=1` on register means “after signup, start a listing.” It is not a second account type.
 - The same session can hold household details and a professional listing.
+
+Create a Listing preserves the intended `/professional/edit` destination for guests. Login and sign-up offer the authentication entry choices, while signed-in residents and professionals continue directly to the existing listing form.
 
 ### Switching without logout
 
-When a listing exists, the header photo opens **Switch accounts**:
+The header photo opens **Switch workspace**:
 
-- Resident — find services
-- Professional — my listing
+- Resident
+- Professional
 
-The current view is marked with a check. Navigation, the logo subtitle (“Addis Ababa” vs “Professional”), and which photo appears in the header follow the active view. The person stays signed in.
-
-If there is no listing yet, the menu offers **List my trade**.
+The current workspace is marked with a subtle background and checkmark. Selecting Professional creates the professional profile when needed, without introducing another account type. Navigation, the logo subtitle (“Addis Ababa” vs “Professional”), and which photo appears in the header follow the active workspace. The person stays signed in.
 
 ### Photos
 
@@ -108,7 +107,7 @@ Tokens live in `app/src/index.css`.
 - **Amber** only for “finish your listing.”
 - **Red** only for form errors.
 
-Phone and Telegram use the same row treatment as the rest of the directory. Cards are 12px corners, light navy shadow. Area chips are pills. Titles start around 28px on a phone and step up on larger screens.
+Phone and Telegram use the same row treatment as the rest of the directory. Their rows are discoverable links: on hover they shift to `surface-high`, lift slightly, and gain the raised shadow; on press they return to their resting position. Primary and secondary buttons use the same 200ms lift treatment, with primary buttons deepening to `primary` and secondary buttons shifting to `surface-high`. Cards are 12px corners, light navy shadow. Area chips are pills. Titles start around 28px on a phone and step up on larger screens.
 
 ---
 

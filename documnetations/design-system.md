@@ -1,6 +1,6 @@
 # Design system
 
-Tokens are defined in `app/src/index.css`.
+Tokens are defined in `Frontend/src/index.css`.
 
 ## Color
 
@@ -41,7 +41,7 @@ Family: Inter.
 
 | Component | File | Purpose |
 | --- | --- | --- |
-| `Header` | `app/src/components/Header.tsx` | Navigation and Switch accounts |
+| `Header` | `Frontend/src/components/Header.tsx` | Navigation and Switch workspace |
 | `Footer` | `app/src/components/Footer.tsx` | Sub-cities and utility links |
 | `Layout` | `app/src/components/Layout.tsx` | Page chrome |
 | `ProfessionalCard` | `app/src/components/ProfessionalCard.tsx` | Directory listing |
@@ -56,3 +56,6 @@ Family: Inter.
 - Primary: navy fill, white text, ~44–48px tall.
 - Secondary: text or `surface-low` fill.
 - Focus: 2px secondary-blue outline.
+- Hover: primary controls deepen to `primary`; secondary controls and contact rows use `surface-high`.
+- Interactive controls transition over 200ms, lift by 2px, and use the raised shadow on hover. They return to their resting position on press.
+- Phone and Telegram rows are links, so they use the same hover treatment as buttons while preserving their `surface-low` resting state.
