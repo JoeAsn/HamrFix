@@ -5,22 +5,41 @@ import { Icon } from "../components/Icon"
 import { ProfessionalCard } from "../components/ProfessionalCard"
 import { CATEGORIES, SUB_CITIES, filterProfessionals } from "../data/catalog"
 
+const RESULTS_PER_PAGE = 4
+
 export function BrowsePage() {
   const [params, setParams] = useSearchParams()
   const [filtersOpen, setFiltersOpen] = useState(false)
   const query = params.get("q") ?? ""
   const category = params.get("category") ?? ""
   const area = params.get("area") ?? ""
+  const requestedPage = Number.parseInt(params.get("page") ?? "1", 10)
 
   const results = useMemo(
     () => filterProfessionals(query, category, area),
     [query, category, area],
+  )
+  const totalPages = Math.max(1, Math.ceil(results.length / RESULTS_PER_PAGE))
+  const currentPage = Number.isFinite(requestedPage)
+    ? Math.min(Math.max(requestedPage, 1), totalPages)
+    : 1
+  const paginatedResults = results.slice(
+    (currentPage - 1) * RESULTS_PER_PAGE,
+    currentPage * RESULTS_PER_PAGE,
   )
 
   function update(key: string, value: string) {
     const next = new URLSearchParams(params)
     if (value) next.set(key, value)
     else next.delete(key)
+    next.delete("page")
+    setParams(next)
+  }
+
+  function goToPage(page: number) {
+    const next = new URLSearchParams(params)
+    if (page === 1) next.delete("page")
+    else next.set("page", String(page))
     setParams(next)
   }
 
@@ -141,11 +160,49 @@ export function BrowsePage() {
             />
           ) : (
             <div className="grid gap-4 md:grid-cols-2">
-              {results.map((professional) => (
+              {paginatedResults.map((professional) => (
                 <ProfessionalCard key={professional.id} professional={professional} />
               ))}
             </div>
           )}
+          {results.length > RESULTS_PER_PAGE ? (
+            <nav className="mt-6 flex items-center justify-center gap-2" aria-label="Professionals pagination">
+              <button
+                type="button"
+                className="interactive-control inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-outline-variant/50 text-primary hover:bg-surface-low disabled:cursor-not-allowed disabled:opacity-40"
+                aria-label="Previous page"
+                disabled={currentPage === 1}
+                onClick={() => goToPage(currentPage - 1)}
+              >
+                <Icon name="chevron_left" />
+              </button>
+              {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
+                <button
+                  key={page}
+                  type="button"
+                  className={`interactive-control inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg px-3 text-sm font-semibold ${
+                    page === currentPage
+                      ? "bg-primary text-on-primary"
+                      : "border border-outline-variant/50 text-primary hover:bg-surface-low"
+                  }`}
+                  aria-current={page === currentPage ? "page" : undefined}
+                  aria-label={`Go to page ${page}`}
+                  onClick={() => goToPage(page)}
+                >
+                  {page}
+                </button>
+              ))}
+              <button
+                type="button"
+                className="interactive-control inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-outline-variant/50 text-primary hover:bg-surface-low disabled:cursor-not-allowed disabled:opacity-40"
+                aria-label="Next page"
+                disabled={currentPage === totalPages}
+                onClick={() => goToPage(currentPage + 1)}
+              >
+                <Icon name="chevron_right" />
+              </button>
+            </nav>
+          ) : null}
         </section>
       </div>
     </div>

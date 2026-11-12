@@ -6,7 +6,7 @@ Explain Hamrfix and start discovery. Headline, search (query + sub-city), catego
 
 ## Browse `/browse`
 
-List professionals that match search, category, and area. On a phone, filters sit behind a toggle. Query params: `q`, `category`, `area`.
+List professionals that match search, category, and area. Results are shown four per page with numbered pagination and previous/next controls. The current page is stored in the `page` query parameter, while changing a filter resets the results to page one. On a phone, filters sit behind a toggle. Query params: `q`, `category`, `area`, `page`.
 
 Each card shows photo or initials, name, profession, years, bio excerpt, area chips, service names, and **View profile**.
 
