@@ -9,6 +9,7 @@
 - Hero and logo images have `alt` text. Decorative avatars use empty `alt`.
 - Form errors use `role="alert"` and text, not color alone.
 - Phone numbers are `tel:` links.
+- Browse pagination is a labeled navigation landmark. Previous and next controls are disabled at the beginning and end, and the active page is exposed with `aria-current="page"`.
 
 Primary buttons use white text on `#173b67`. Body text is dark navy on cool surfaces.
 

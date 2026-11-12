@@ -6,12 +6,13 @@
 flowchart TD
   A[Home] --> B[Search or pick a category]
   B --> C[Browse and filter]
-  C --> D[Professional profile]
-  D --> E{Signed in?}
-  E -->|No| F[Register or log in]
-  F --> D
-  E -->|Yes| G[Phone, Telegram, or short message]
-  G --> H[Arrange the job off Hamrfix]
+  C --> D[Browse paginated results]
+  D --> E[Professional profile]
+  E --> F{Signed in?}
+  F -->|No| G[Register or log in]
+  G --> E
+  F -->|Yes| H[Phone, Telegram, or short message]
+  H --> I[Arrange the job off Hamrfix]
 ```
 
 ## One account, two views
