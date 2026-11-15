@@ -74,9 +74,13 @@ export function HomePage() {
           <div className="lg:col-span-5">
             <div className="rounded-xl bg-surface-lowest p-3 shadow-card sm:p-4">
               <img
+                src="/images/assets/Hero.jpg"
+                alt="Electrician working on a residential electrical panel"
                 className="h-52 w-full rounded-lg object-cover sm:h-72 lg:h-80"
-                alt="Electrician working on a residential circuit board"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDSUMQRVg58y52xEtSwHjqEriO9fdXn4L-whudXZyGyDj8XumoIuR5VAb1rmL4NReAjpLxQwqYOesq-tCmfYlIQX6bdb7mRHWAMdm4n7mcfG8XEuoygZqCcN7069YSmLR5QMK1Xl3gaF7Ur1BANx0vr7hMZlZitrv6h_hMaB71wQWRG1YbRNJgp35mpbN7YxV2fgNs8XbYWUuQQYOhKE0eYqI48Yr_wRgi7QjBeBgE"
+                width="1648"
+                height="928"
+                loading="eager"
+                fetchPriority="high"
               />
               <div className="mt-3 grid grid-cols-3 gap-1.5 text-center sm:mt-4 sm:gap-2">
                 <div className="rounded-lg bg-surface-low p-2 sm:p-3">
