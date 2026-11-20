@@ -15,16 +15,17 @@ Hamrfix does not book visits, take payment, or sit between the two people once t
 ## What residents can do
 
 - Open the home page and search by service or sub-city.
-- Browse categories (plumbing, electrical, carpentry, appliances, painting, cleaning).
+- Browse the six categories: Plumbing, Electrical, Carpentry, Appliances, Painting, and Cleaning.
 - Filter the directory and open a professional profile.
 - Create one Hamrfix account.
-- Add a household photo, phone, and sub-city.
+- Add a household photo and sub-city; a resident phone number is optional.
 - See phone and Telegram on a listing, or send a short note.
 
 ## What professionals can do
 
 - Use the same account to list a trade.
 - Add a professional photo, profession, services, areas, phone, and Telegram.
+- Provide a public contact phone when creating a professional profile.
 - Preview how the listing reads.
 - Switch between resident view and professional view from the profile photo, without logging out.
 

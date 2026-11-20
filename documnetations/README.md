@@ -12,3 +12,4 @@ Hamrfix is a home-service directory for Addis Ababa. This folder describes the i
 8. [Accessibility](accessibility.md)
 9. [UI/UX](ui-ux-design.md)
 10. [Screens](screens.md)
+11. [Database design](database-design.md)
