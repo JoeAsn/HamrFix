@@ -30,6 +30,7 @@ The interface should feel like a calm civic directory: navy, cool surfaces, Inte
 A plumber who also needs an electrician is still one person. Login and register do not ask “resident or professional?”
 
 - Register asks for name, email, and password.
+- A phone number is optional for a resident account; a professional listing requires a public contact phone.
 - The same session can hold household details and a professional listing.
 
 Create a Listing preserves the intended `/professional/edit` destination for guests. Login and sign-up offer the authentication entry choices, while signed-in residents and professionals continue directly to the existing listing form.
@@ -77,7 +78,7 @@ Public catalog profiles also show years of experience and languages. The self-se
 
 ### Categories
 
-Plumbing, electrical, carpentry, appliances, painting, cleaning. These are the home grid and the browse filter.
+Plumbing, Electrical, Carpentry, Appliances, Painting, and Cleaning. These six categories are used in the home grid and browse filter.
 
 ### Search
 

@@ -35,7 +35,7 @@ What the directory is, how contact works, and what households and professionals 
 
 ## Resident account `/account` and `/account/edit`
 
-Household photo, name, email, phone, sub-city. A card for the professional listing, or a prompt to add one.
+Household photo, name, email, optional phone, and sub-city. A card for the professional listing, or a prompt to add one.
 
 ## Professional workspace `/professional` and `/professional/edit`
 
