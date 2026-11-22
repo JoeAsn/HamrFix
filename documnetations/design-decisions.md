@@ -74,7 +74,7 @@ One listing = **one profession** + **many services** + **many sub-cities**.
 
 This keeps listings concrete. Prices are omitted because Hamrfix does not broker the job.
 
-Public catalog profiles also show years of experience and languages. The self-serve edit form focuses on the fields a professional must keep current: photo, contact, profession, category, overview, areas, and services.
+Public catalog profiles also show years of experience and languages. The self-serve edit form focuses on the fields a professional must keep current: photo, contact, profession, category, overview, areas, and services. Service area selection requires one primary sub-city and permits zero to two additional sub-cities, with no duplicates and no more than three locations total. The primary is stored first in the frontend's existing ordered `areas` list and is visually labeled on cards, public profiles, and account views. The public individual profile displays at most three locations.
 
 ### Categories
 

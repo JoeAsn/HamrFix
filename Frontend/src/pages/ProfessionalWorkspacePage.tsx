@@ -2,7 +2,6 @@ import { useEffect } from "react"
 import { Link, Navigate, useNavigate } from "react-router-dom"
 import { useAuth } from "../auth/AuthContext"
 import { Avatar } from "../components/Avatar"
-import { Chip } from "../components/Chip"
 import { EmptyState } from "../components/EmptyState"
 
 export function ProfessionalWorkspacePage() {
@@ -57,7 +56,12 @@ export function ProfessionalWorkspacePage() {
           {listing.areas.length === 0 ? (
             <span className="text-sm text-on-variant">No service areas selected.</span>
           ) : (
-            listing.areas.map((area) => <Chip key={area}>{area}</Chip>)
+            listing.areas.map((area, index) => (
+              <span key={area} className={`inline-flex min-h-9 items-center gap-1 rounded-full px-3 py-1.5 text-xs font-semibold ${index === 0 ? "bg-primary-container text-on-primary" : "border border-outline-variant/40 bg-surface-low text-primary-container"}`}>
+                {index === 0 ? <span className="material-symbols-outlined text-[15px]" aria-hidden="true">star</span> : null}
+                {area}{index === 0 ? <span className="ml-0.5">· Primary</span> : null}
+              </span>
+            ))
           )}
         </div>
         <p className="mt-4 text-sm text-on-variant">
