@@ -1,0 +1,12 @@
+{
+  "name": "hamrfix_backend",
+  "version": "1.0.0",
+  "description": "A RESTAPI build to serve the hamrfix build with express , nodeJS and postgresql.",
+  "license": "ISC",
+  "author": "Yohannes Asnake",
+  "type": "module",
+  "main": "./src/server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
