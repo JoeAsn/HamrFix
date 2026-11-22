@@ -1,6 +1,5 @@
 import { Link, useParams } from "react-router-dom"
 import { useAuth } from "../auth/AuthContext"
-import { Chip } from "../components/Chip"
 import { Icon } from "../components/Icon"
 import { getCategory, getProfessional } from "../data/catalog"
 
@@ -59,8 +58,11 @@ export function ProfessionalProfilePage() {
                   {category ? ` · ${category.name}` : ""} · {professional.yearsExperience}+ years
                 </p>
                 <div className="mt-3 flex flex-wrap gap-2">
-                  {professional.areas.map((area) => (
-                    <Chip key={area}>{area}</Chip>
+                  {professional.areas.slice(0, 3).map((area, index) => (
+                    <span key={area} className={`inline-flex min-h-9 items-center gap-1 rounded-full px-3 py-1.5 text-xs font-semibold ${index === 0 ? "bg-primary-container text-on-primary" : "border border-outline-variant/40 bg-surface-low text-primary-container"}`}>
+                      {index === 0 ? <span className="material-symbols-outlined text-[15px]" aria-hidden="true">star</span> : null}
+                      {area}{index === 0 ? <span className="ml-0.5">· Primary</span> : null}
+                    </span>
                   ))}
                 </div>
               </div>

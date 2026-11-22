@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom"
 import type { Professional } from "../data/catalog"
-import { Chip } from "./Chip"
 import { Icon } from "./Icon"
 
 export function ProfessionalCard({ professional }: { professional: Professional }) {
@@ -33,8 +32,11 @@ export function ProfessionalCard({ professional }: { professional: Professional 
       </div>
       <p className="mt-3 line-clamp-2 text-sm text-on-variant">{professional.bio}</p>
       <div className="mt-3 flex flex-wrap gap-1.5">
-        {professional.areas.slice(0, 4).map((area) => (
-          <Chip key={area}>{area}</Chip>
+        {professional.areas.slice(0, 3).map((area, index) => (
+          <span key={area} className={`inline-flex min-h-8 items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold ${index === 0 ? "bg-primary-container text-on-primary" : "border border-outline-variant/40 bg-surface-low text-primary-container"}`}>
+            {index === 0 ? <span className="material-symbols-outlined text-[14px]" aria-hidden="true">star</span> : null}
+            {area}{index === 0 ? <span className="ml-0.5">· Primary</span> : null}
+          </span>
         ))}
       </div>
       <p className="mt-3 text-sm text-on-surface">

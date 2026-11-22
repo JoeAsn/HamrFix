@@ -24,7 +24,7 @@ Hamrfix does not book visits, take payment, or sit between the two people once t
 ## What professionals can do
 
 - Use the same account to list a trade.
-- Add a professional photo, profession, services, areas, phone, and Telegram.
+- Add a professional photo, profession, services, up to three service areas, phone, and Telegram. One area is required as the primary location; up to two optional areas may be added.
 - Provide a public contact phone when creating a professional profile.
 - Preview how the listing reads.
 - Switch between resident view and professional view from the profile photo, without logging out.

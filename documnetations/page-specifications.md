@@ -8,11 +8,11 @@ Explain Hamrfix and start discovery. Headline, search (query + sub-city), catego
 
 List professionals that match search, category, and area. Results are shown four per page with numbered pagination and previous/next controls. The current page is stored in the `page` query parameter, while changing a filter resets the results to page one. On a phone, filters sit behind a toggle. Query params: `q`, `category`, `area`, `page`.
 
-Each card shows photo or initials, name, profession, years, bio excerpt, area chips, service names, and **View profile**.
+Each card shows photo or initials, name, profession, years, bio excerpt, up to three area chips, service names, and **View profile**. The first area is the primary area and is marked with a **Primary** label and highlighted styling; remaining areas are additional service areas.
 
 ## Professional profile `/professionals/:id`
 
-Photo, name, profession, category, years, bio, languages, areas, services.
+Photo, name, profession, category, years, bio, languages, services, and up to three service areas. The primary area is shown first with a **Primary** label and highlighted styling; additional areas use the secondary chip style.
 
 - Guest: create an account or log in to see contact.
 - Signed in: phone, Telegram, send a short message.
@@ -39,7 +39,7 @@ Household photo, name, email, optional phone, and sub-city. A card for the profe
 
 ## Professional workspace `/professional` and `/professional/edit`
 
-Photo, profession, overview, areas, services. Edit adds or removes services and toggles sub-cities.
+Photo, profession, overview, areas, and services. Edit requires exactly one primary service area and allows up to two optional additional sub-cities, for a maximum of three total. The area selector excludes the primary from additional options, supports removing additional areas and changing the primary, and displays a live selection count. On save, the frontend keeps the primary first in the existing `areas` list; no schema or storage change is implied. The workspace and account views label the first area as primary.
 
 The professional workspace uses **Create a Listing** for the listing creation action, with supporting text: “Showcase your services and reach potential customers.”
 

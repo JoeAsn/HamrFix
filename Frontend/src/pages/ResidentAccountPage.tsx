@@ -53,9 +53,13 @@ export function ResidentAccountPage() {
               <Avatar name={session.name} photo={session.professional.photo || session.photo} size="md" />
               <div>
                 <p className="font-semibold text-primary">{session.professional.profession || "Profession not set yet"}</p>
-                <p className="text-sm text-on-variant">
-                  {session.professional.areas.length > 0 ? session.professional.areas.join(", ") : "No areas selected"}
-                </p>
+                <div className="mt-1 flex flex-wrap gap-1.5" aria-label="Professional service areas">
+                  {session.professional.areas.length > 0 ? session.professional.areas.map((area, index) => (
+                    <span key={area} className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-semibold ${index === 0 ? "bg-primary-container text-on-primary" : "bg-surface-low text-primary-container"}`}>
+                      {area}{index === 0 ? " · Primary" : " · Additional"}
+                    </span>
+                  )) : <span className="text-sm text-on-variant">No areas selected</span>}
+                </div>
               </div>
             </div>
             <button
