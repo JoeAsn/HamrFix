@@ -1,4 +1,3 @@
-
 const ERROR_CODES = {
     // 2xx - Success
     OK: 200,
