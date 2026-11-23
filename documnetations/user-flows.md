@@ -4,7 +4,7 @@
 
 ```mermaid
 flowchart TD
-  A[Home] --> B[Search or pick a category]
+  A[Home] --> B[Choose Services or Professionals and search]
   B --> C[Browse and filter]
   C --> D[Browse cursor-paginated results with Previous and Next]
   D --> E[Professional profile]

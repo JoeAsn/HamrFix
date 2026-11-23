@@ -4,23 +4,27 @@ Full-page captures of the Hamrfix UI. Files live in `documents/ui/`.
 
 ## Home
 
-![Home](ui/home.png)
+The saved Home captures predate the Services/Professionals selector and require genuine recapture: `ui/home.png`, `ui/home-mobile.png`.
+
+![Home, outdated capture pending replacement](ui/home.png)
 
 Phone:
 
-![Home on a phone](ui/home-mobile.png)
+![Home on a phone, outdated capture pending replacement](ui/home-mobile.png)
 
 ## Browse
 
-![Browse](ui/browse.png)
+The saved Browse captures predate the search row, independent Filters control, and Previous/Next cursor-style navigation. Recapture these genuine screens: `ui/browse.png`, `ui/browse-empty.png`, `ui/browse-mobile.png`.
+
+![Browse, outdated capture pending replacement](ui/browse.png)
 
 No matching results:
 
-![Browse empty](ui/browse-empty.png)
+![Browse empty state, outdated capture pending replacement](ui/browse-empty.png)
 
 Phone:
 
-![Browse on a phone](ui/browse-mobile.png)
+![Browse on a phone, outdated capture pending replacement](ui/browse-mobile.png)
 
 ## Professional profile
 

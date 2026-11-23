@@ -82,7 +82,9 @@ Plumbing, Electrical, Carpentry, Appliances, Painting, and Cleaning. These six c
 
 ### Search
 
-Home search is **area + free text**. It stacks on a phone and sits in one bar from `sm` up. Submit always goes to `/browse`. Browse can add a category filter.
+Discovery offers two modes: **Services** (default), which searches a professional's trade and offered service text, and **Professionals**, which searches names. Home preserves its sub-city control and passes the selected mode to Browse; Browse keeps the selector beside the query input. Filters remain separate from search: the Filters button and result count sit below the search row, and the panel contains category (Services only) and sub-city filters. Query, mode, and filter state are URL-backed; local cursor history is reset on any of those changes. The Browse API is not implemented, so this interaction currently filters the local catalog and must not be described as an API integration.
+
+The Home page owns the in-progress home form state and writes the selected values into the Browse URL on submit. Browse reads `q`, `mode`, `category`, and `area` from the URL; the shared catalog filter applies mode-specific matching, while Browse owns the open/closed filter panel and local anchor history for Previous/Next navigation. No discovery request or network response state exists yet.
 
 Browse results use cursor pagination with Previous and Next controls rather than numbered page links. A cursor is tied to the active filters and deterministic sort order; changing filters resets browsing to the first batch. The cursor is opaque to the frontend. Browse does not require an exact total count, which lets the API indicate whether another batch exists without computing a full count.
 
