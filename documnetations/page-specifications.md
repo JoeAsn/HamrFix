@@ -6,7 +6,7 @@ Explain Hamrfix and start discovery. Headline, search (query + sub-city), catego
 
 ## Browse `/browse`
 
-List professionals that match search, category, and area. Results are shown four per page with numbered pagination and previous/next controls. The current page is stored in the `page` query parameter, while changing a filter resets the results to page one. On a phone, filters sit behind a toggle. Query params: `q`, `category`, `area`, `page`.
+List professionals that match search, category, and area. Results are shown four at a time with cursor-based pagination and Previous/Next controls only; there are no numbered page links. Changing a filter resets the cursor and starts from the first result batch. On a phone, filters sit behind a toggle. Query params: `q`, `category`, and `area`; cursor state is managed by the browse client and is not currently exposed in the URL. When API-backed, the cursor is opaque to the client and must be discarded when filters or sort order change. The API indicates whether a previous or next batch exists; browse does not require an exact total result count.
 
 Each card shows photo or initials, name, profession, years, bio excerpt, up to three area chips, service names, and **View profile**. The first area is the primary area and is marked with a **Primary** label and highlighted styling; remaining areas are additional service areas.
 

@@ -6,7 +6,7 @@
 flowchart TD
   A[Home] --> B[Search or pick a category]
   B --> C[Browse and filter]
-  C --> D[Browse paginated results]
+  C --> D[Browse cursor-paginated results with Previous and Next]
   D --> E[Professional profile]
   E --> F{Signed in?}
   F -->|No| G[Register or log in]

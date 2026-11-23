@@ -84,6 +84,8 @@ Plumbing, Electrical, Carpentry, Appliances, Painting, and Cleaning. These six c
 
 Home search is **area + free text**. It stacks on a phone and sits in one bar from `sm` up. Submit always goes to `/browse`. Browse can add a category filter.
 
+Browse results use cursor pagination with Previous and Next controls rather than numbered page links. A cursor is tied to the active filters and deterministic sort order; changing filters resets browsing to the first batch. The cursor is opaque to the frontend. Browse does not require an exact total count, which lets the API indicate whether another batch exists without computing a full count.
+
 Residents usually know a trade (“plumber”) or a place (“Bole”). Category cards help people who think in household problems instead of keywords.
 
 ### About
