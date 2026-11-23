@@ -1,11 +1,11 @@
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { Link, useSearchParams } from "react-router-dom"
 import { EmptyState } from "../components/EmptyState"
 import { Icon } from "../components/Icon"
 import { ProfessionalCard } from "../components/ProfessionalCard"
 import { CATEGORIES, SUB_CITIES, filterProfessionals } from "../data/catalog"
 
-const RESULTS_PER_PAGE = 4
+const RESULTS_PER_BATCH = 4
 
 export function BrowsePage() {
   const [params, setParams] = useSearchParams()
@@ -13,34 +13,42 @@ export function BrowsePage() {
   const query = params.get("q") ?? ""
   const category = params.get("category") ?? ""
   const area = params.get("area") ?? ""
-  const requestedPage = Number.parseInt(params.get("page") ?? "1", 10)
+  const [cursorHistory, setCursorHistory] = useState<(string | null)[]>([null])
 
   const results = useMemo(
     () => filterProfessionals(query, category, area),
     [query, category, area],
   )
-  const totalPages = Math.max(1, Math.ceil(results.length / RESULTS_PER_PAGE))
-  const currentPage = Number.isFinite(requestedPage)
-    ? Math.min(Math.max(requestedPage, 1), totalPages)
-    : 1
-  const paginatedResults = results.slice(
-    (currentPage - 1) * RESULTS_PER_PAGE,
-    currentPage * RESULTS_PER_PAGE,
-  )
+  const batchStart = cursorHistory[cursorHistory.length - 1]
+  const startIndex = batchStart
+    ? Math.max(0, results.findIndex((professional) => professional.id === batchStart) + 1)
+    : 0
+  const paginatedResults = results.slice(startIndex, startIndex + RESULTS_PER_BATCH)
+  const hasPreviousBatch = cursorHistory.length > 1
+  const hasNextBatch = startIndex + RESULTS_PER_BATCH < results.length
+
+  useEffect(() => {
+    setCursorHistory([null])
+  }, [query, category, area])
 
   function update(key: string, value: string) {
     const next = new URLSearchParams(params)
     if (value) next.set(key, value)
     else next.delete(key)
-    next.delete("page")
     setParams(next)
+    setCursorHistory([null])
   }
 
-  function goToPage(page: number) {
-    const next = new URLSearchParams(params)
-    if (page === 1) next.delete("page")
-    else next.set("page", String(page))
-    setParams(next)
+  function goToNextPage() {
+    if (!hasNextBatch) return
+    const nextCursor = paginatedResults.at(-1)?.id ?? null
+    if (!nextCursor) return
+    setCursorHistory((history) => [...history, nextCursor])
+  }
+
+  function goToPreviousPage() {
+    if (!hasPreviousBatch) return
+    setCursorHistory((history) => history.slice(0, -1))
   }
 
   const activeFilterCount = [query, category, area].filter(Boolean).length
@@ -165,39 +173,24 @@ export function BrowsePage() {
               ))}
             </div>
           )}
-          {results.length > RESULTS_PER_PAGE ? (
+          {results.length > RESULTS_PER_BATCH ? (
             <nav className="mt-6 flex items-center justify-center gap-2" aria-label="Professionals pagination">
               <button
                 type="button"
                 className="interactive-control inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-outline-variant/50 text-primary hover:bg-surface-low disabled:cursor-not-allowed disabled:opacity-40"
-                aria-label="Previous page"
-                disabled={currentPage === 1}
-                onClick={() => goToPage(currentPage - 1)}
+                aria-label="Previous professionals"
+                disabled={!hasPreviousBatch}
+                onClick={goToPreviousPage}
               >
                 <Icon name="chevron_left" />
               </button>
-              {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
-                <button
-                  key={page}
-                  type="button"
-                  className={`interactive-control inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg px-3 text-sm font-semibold ${
-                    page === currentPage
-                      ? "bg-primary text-on-primary"
-                      : "border border-outline-variant/50 text-primary hover:bg-surface-low"
-                  }`}
-                  aria-current={page === currentPage ? "page" : undefined}
-                  aria-label={`Go to page ${page}`}
-                  onClick={() => goToPage(page)}
-                >
-                  {page}
-                </button>
-              ))}
+              <span className="px-2 text-sm text-on-variant">More professionals</span>
               <button
                 type="button"
                 className="interactive-control inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-outline-variant/50 text-primary hover:bg-surface-low disabled:cursor-not-allowed disabled:opacity-40"
-                aria-label="Next page"
-                disabled={currentPage === totalPages}
-                onClick={() => goToPage(currentPage + 1)}
+                aria-label="Next professionals"
+                disabled={!hasNextBatch}
+                onClick={goToNextPage}
               >
                 <Icon name="chevron_right" />
               </button>
