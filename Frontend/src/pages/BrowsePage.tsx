@@ -6,7 +6,6 @@ import { ProfessionalCard } from "../components/ProfessionalCard"
 import { CATEGORIES, SUB_CITIES, filterProfessionals, type DiscoveryMode } from "../data/catalog"
 
 const RESULTS_PER_BATCH = 4
-const RESULTS_PER_BATCH = 4
 
 export function BrowsePage() {
   const [params, setParams] = useSearchParams()
@@ -44,7 +43,6 @@ export function BrowsePage() {
     if (nextMode === "services") next.delete("mode")
     else next.set("mode", nextMode)
     setParams(next)
-    setCursorHistory([null])
   }
 
   function resetFilters() {
