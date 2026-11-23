@@ -20,8 +20,8 @@ The account menu, including Switch workspace, opens from the profile photo at ev
 
 ## Page behavior
 
-- **Home.** Stacked search; shorter hero image on phones.
-- **Browse.** Filters collapsed behind a control; result count visible. Sticky sidebar from `lg`.
+- **Home.** Stacked discovery controls on phones; mode selector spans above the location and query controls. The search card wraps its selector and fields at desktop widths; shorter hero image on phones.
+- **Browse.** Mode selector and query input stack on narrow screens and share a row from `sm`; the Filters button and result count sit below. The filter panel expands inline at every width; the professional grid becomes two columns from `md`.
 - **Profile.** Identity, then contact. Contact is sticky from `lg`.
 - **Account.** Photo and name share a row; actions stack, then sit in a row from `sm`.
 - **Forms.** One column by default; identity fields go two-up from `sm`. Save is full width on phones.

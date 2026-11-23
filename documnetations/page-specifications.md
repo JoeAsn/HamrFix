@@ -2,11 +2,11 @@
 
 ## Home `/`
 
-Explain Hamrfix and start discovery. Headline, search (query + sub-city), category cards, how-it-works, professional banner. Primary action: **Find professionals**.
+Explain Hamrfix and start discovery. Headline, search card with a Services/Professionals selector (Services selected by default), sub-city selection, query input, category cards, how-it-works, and professional banner. The selector and placeholder communicate the active search target; switching modes preserves the selected sub-city. Submitting sends the query, area, and non-default mode to Browse. Empty submissions preserve the existing behavior and open Browse with any selected mode and area. Primary action: **Find professionals**.
 
 ## Browse `/browse`
 
-List professionals that match search, category, and area. Results are shown four per page with numbered pagination and previous/next controls. The current page is stored in the `page` query parameter, while changing a filter resets the results to page one. On a phone, filters sit behind a toggle. Query params: `q`, `category`, `area`, `page`.
+List professionals using the selected search mode. Services is the default and matches profession/trade names plus offered service names and descriptions. Professionals matches profile names, including partial names. The search mode selector is visually connected to the query input. A separate **Filters** button appears below search beside the result count and toggles the filter panel. Category filtering is available in Services mode; service area filtering is available in both modes. Search and filters can be combined. Changing mode, query, or filters resets cursor history to the first batch. Results are shown four at a time with Previous/Next controls and no numbered pages. Query params are `q`, `category`, `area`, and `mode`; omit `mode` for Services, or set `mode=professionals`. Search/filter state is URL-backed; cursor history is in client state. The local catalog uses the last visible professional ID as its continuation anchor. There is no Browse API contract yet, so no network cursor, asynchronous loading state, stale-request handling, or request error state is implemented.
 
 Each card shows photo or initials, name, profession, years, bio excerpt, up to three area chips, service names, and **View profile**. The first area is the primary area and is marked with a **Primary** label and highlighted styling; remaining areas are additional service areas.
 

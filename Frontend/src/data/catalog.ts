@@ -76,6 +76,8 @@ export type Professional = {
   photo: string
 }
 
+export type DiscoveryMode = "services" | "professionals"
+
 export const PROFESSIONALS: Professional[] = [
   {
     id: "abebe-mekonnen",
@@ -245,20 +247,20 @@ export function getCategory(id: string) {
   return CATEGORIES.find((item) => item.id === id)
 }
 
-export function filterProfessionals(query: string, categoryId: string, area: string) {
+export function filterProfessionals(
+  query: string,
+  categoryId: string,
+  area: string,
+  mode: DiscoveryMode = "services",
+) {
   const q = query.trim().toLowerCase()
   return PROFESSIONALS.filter((pro) => {
     const matchesCategory = !categoryId || pro.categoryId === categoryId
     const matchesArea = !area || pro.areas.includes(area as SubCity)
-    const haystack = [
-      pro.name,
-      pro.profession,
-      pro.bio,
-      ...pro.services.map((service) => `${service.name} ${service.description}`),
-      ...pro.areas,
-    ]
-      .join(" ")
-      .toLowerCase()
+    const searchableText = mode === "professionals"
+      ? [pro.name]
+      : [pro.profession, ...pro.services.map((service) => `${service.name} ${service.description}`)]
+    const haystack = searchableText.join(" ").toLowerCase()
     const matchesQuery = !q || haystack.includes(q)
     return matchesCategory && matchesArea && matchesQuery
   })

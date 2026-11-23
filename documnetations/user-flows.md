@@ -4,15 +4,16 @@
 
 ```mermaid
 flowchart TD
-  A[Home] --> B[Search or pick a category]
+  A[Home] --> B[Choose Services or Professionals and search]
   B --> C[Browse and filter]
-  C --> D[Browse paginated results]
-  D --> E[Professional profile]
-  E --> F{Signed in?}
-  F -->|No| G[Register or log in]
-  G --> E
-  F -->|Yes| H[Phone, Telegram, or short message]
-  H --> I[Arrange the job off Hamrfix]
+  C --> D[Browse results and combine search with filters]
+  D --> E[Move through cursor batches with Previous and Next]
+  E --> F[Professional profile]
+  F --> G{Signed in?}
+  G -->|No| H[Register or log in]
+  H --> F
+  G -->|Yes| I[Phone, Telegram, or short message]
+  I --> J[Arrange the job off Hamrfix]
 ```
 
 ## One account, two views
