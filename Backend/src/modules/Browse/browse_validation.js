@@ -7,7 +7,7 @@ const browse_query_schema = z
     service: z.string().trim().max(100).optional(),
     category: z.string().trim().optional(),
     location: z.string().trim().max(100).optional(),
-    cursor: z.string().optional(),
+    cursor: z.string().trim().optional().nullable(),
     limit: z.coerce.number().int().min(1).max(50).default(10),
   })
   .strict();
@@ -23,7 +23,7 @@ function browse_validation(req, res, next) {
 
   let decoded_cursor;
 
-  if (cursor) {
+  if (cursor != null && cursor !== "") {
     try {
       const decoded = Buffer.from(cursor, "base64").toString("utf8");
       decoded_cursor = JSON.parse(decoded);
