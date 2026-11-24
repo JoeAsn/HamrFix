@@ -3,18 +3,21 @@ import { Link, useNavigate } from "react-router-dom"
 import { CATEGORIES, SUB_CITIES } from "../data/catalog"
 import { Icon } from "../components/Icon"
 import { useAuth } from "../auth/AuthContext"
+import type { DiscoveryMode } from "../data/catalog"
 
 export function HomePage() {
   const { session } = useAuth()
   const navigate = useNavigate()
   const [query, setQuery] = useState("")
   const [area, setArea] = useState("")
+  const [mode, setMode] = useState<DiscoveryMode>("services")
 
   function onSearch(event: FormEvent) {
     event.preventDefault()
     const params = new URLSearchParams()
     if (query.trim()) params.set("q", query.trim())
     if (area) params.set("area", area)
+    if (mode === "professionals") params.set("mode", mode)
     navigate(`/browse?${params.toString()}`)
   }
 
@@ -34,8 +37,24 @@ export function HomePage() {
             </p>
             <form
               onSubmit={onSearch}
-              className="mt-5 flex w-full max-w-2xl flex-col gap-2 rounded-xl bg-surface-lowest p-2 shadow-raised sm:mt-6 lg:flex-row"
+              className="mt-5 flex w-full max-w-2xl flex-col gap-2 rounded-xl bg-surface-lowest p-2 shadow-raised sm:mt-6 lg:flex-row lg:flex-wrap"
             >
+              <fieldset className="flex w-full gap-1 rounded-lg bg-surface-low p-1 lg:basis-full">
+                <legend className="sr-only">Search for</legend>
+                {(["services", "professionals"] as const).map((item) => (
+                  <button
+                    key={item}
+                    type="button"
+                    aria-pressed={mode === item}
+                    onClick={() => setMode(item)}
+                    className={`interactive-control min-h-10 flex-1 rounded-md px-3 text-sm font-semibold capitalize focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
+                      mode === item ? "bg-surface-lowest text-primary shadow-card" : "text-on-variant"
+                    }`}
+                  >
+                    {item}
+                  </button>
+                ))}
+              </fieldset>
               <label className="sr-only" htmlFor="home-area">
                 Service area
               </label>
@@ -53,14 +72,14 @@ export function HomePage() {
                 ))}
               </select>
               <label className="sr-only" htmlFor="home-query">
-                Search services
+                {mode === "services" ? "Search a service or trade" : "Search by professional name"}
               </label>
               <input
                 id="home-query"
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
-                placeholder="Search a service or trade"
-                className="h-12 w-full min-w-0 flex-1 rounded-lg px-3"
+                placeholder={mode === "services" ? "Search a service or trade" : "Search by professional name"}
+                className="h-12 w-full min-w-0 flex-1 rounded-lg px-4 py-3 sm:px-3 sm:py-0"
               />
               <button
                 type="submit"

@@ -1,6 +1,6 @@
 # Hamrfix project overview
 
-Hamrfix is a public **directory** of household service professionals in Addis Ababa. Residents search by trade and sub-city, read a listing, and contact the person by phone or Telegram. Professionals publish one profession, the services they offer, and the areas they cover.
+Hamrfix is a public **directory** of household service professionals in Addis Ababa. Residents can search in Services mode (the default) by trade or offered service, or in Professionals mode by a person's name. They can combine search with sub-city and, in Services mode, category filters, then read a listing and contact the person by phone or Telegram. Professionals publish one profession, the services they offer, and the areas they cover.
 
 Hamrfix does not book visits, take payment, or sit between the two people once they have each other’s details.
 
@@ -14,7 +14,7 @@ Hamrfix does not book visits, take payment, or sit between the two people once t
 
 ## What residents can do
 
-- Open the home page and search by service or sub-city.
+- Open the home page and search for a service/trade or a professional by name, optionally limited to a sub-city.
 - Browse the six categories: Plumbing, Electrical, Carpentry, Appliances, Painting, and Cleaning.
 - Filter the directory and open a professional profile.
 - Create one Hamrfix account.

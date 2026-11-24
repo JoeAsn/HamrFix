@@ -1,9 +1,9 @@
-import { useEffect, useMemo, useState } from "react"
+import { useState } from "react"
 import { Link, useSearchParams } from "react-router-dom"
 import { EmptyState } from "../components/EmptyState"
 import { Icon } from "../components/Icon"
 import { ProfessionalCard } from "../components/ProfessionalCard"
-import { CATEGORIES, SUB_CITIES, filterProfessionals } from "../data/catalog"
+import { CATEGORIES, SUB_CITIES, filterProfessionals, type DiscoveryMode } from "../data/catalog"
 
 const RESULTS_PER_BATCH = 4
 
@@ -13,191 +13,209 @@ export function BrowsePage() {
   const query = params.get("q") ?? ""
   const category = params.get("category") ?? ""
   const area = params.get("area") ?? ""
-  const [cursorHistory, setCursorHistory] = useState<(string | null)[]>([null])
+  const mode: DiscoveryMode = params.get("mode") === "professionals" ? "professionals" : "services"
+  const browseStateKey = JSON.stringify([query, mode, category, area])
+  const [cursorState, setCursorState] = useState<{ key: string; history: (string | null)[] }>({
+    key: browseStateKey,
+    history: [null],
+  })
+  const cursorHistory = cursorState.key === browseStateKey ? cursorState.history : [null]
 
-  const results = useMemo(
-    () => filterProfessionals(query, category, area),
-    [query, category, area],
-  )
-  const batchStart = cursorHistory[cursorHistory.length - 1]
-  const startIndex = batchStart
-    ? Math.max(0, results.findIndex((professional) => professional.id === batchStart) + 1)
+  const results = filterProfessionals(query, mode === "services" ? category : "", area, mode)
+  const cursor = cursorHistory[cursorHistory.length - 1]
+  const startIndex = cursor
+    ? Math.max(0, results.findIndex((professional) => professional.id === cursor) + 1)
     : 0
-  const paginatedResults = results.slice(startIndex, startIndex + RESULTS_PER_BATCH)
+  const visibleProfessionals = results.slice(startIndex, startIndex + RESULTS_PER_BATCH)
   const hasPreviousBatch = cursorHistory.length > 1
   const hasNextBatch = startIndex + RESULTS_PER_BATCH < results.length
+  const activeFilterCount = [mode === "services" ? category : "", area].filter(Boolean).length
 
-  useEffect(() => {
-    setCursorHistory([null])
-  }, [query, category, area])
-
-  function update(key: string, value: string) {
+  function updateFilter(key: string, value: string) {
     const next = new URLSearchParams(params)
     if (value) next.set(key, value)
     else next.delete(key)
     setParams(next)
-    setCursorHistory([null])
   }
 
-  function goToNextPage() {
+  function changeMode(nextMode: DiscoveryMode) {
+    const next = new URLSearchParams(params)
+    if (nextMode === "services") next.delete("mode")
+    else next.set("mode", nextMode)
+    setParams(next)
+  }
+
+  function resetFilters() {
+    const next = new URLSearchParams(params)
+    next.delete("category")
+    next.delete("area")
+    setParams(next)
+  }
+
+  function clearSearch() {
+    setParams({})
+  }
+
+  function goToNextBatch() {
     if (!hasNextBatch) return
-    const nextCursor = paginatedResults.at(-1)?.id ?? null
-    if (!nextCursor) return
-    setCursorHistory((history) => [...history, nextCursor])
+    const nextCursor = visibleProfessionals.at(-1)?.id
+    if (nextCursor) {
+      setCursorState({ key: browseStateKey, history: [...cursorHistory, nextCursor] })
+    }
   }
 
-  function goToPreviousPage() {
-    if (!hasPreviousBatch) return
-    setCursorHistory((history) => history.slice(0, -1))
+  function goToPreviousBatch() {
+    if (hasPreviousBatch) {
+      setCursorState({ key: browseStateKey, history: cursorHistory.slice(0, -1) })
+    }
   }
-
-  const activeFilterCount = [query, category, area].filter(Boolean).length
 
   return (
     <div className="mx-auto max-w-[1280px] px-4 py-6 sm:py-8 md:px-8 lg:px-12">
       <nav className="mb-4 flex flex-wrap items-center gap-x-2 text-sm text-on-variant">
-        <Link to="/" className="hover:text-primary">
-          Home
-        </Link>
+        <Link to="/" className="hover:text-primary">Home</Link>
         <span>/</span>
         <span className="font-semibold text-primary">Browse services</span>
       </nav>
-      <div className="grid gap-4 lg:grid-cols-12 lg:gap-6">
-        <aside className="lg:col-span-3">
-          <div className="mb-3 flex items-center justify-between gap-3 lg:hidden">
+
+      <section aria-labelledby="browse-title">
+        <h1 id="browse-title" className="text-xl font-semibold text-primary sm:text-2xl">
+          Available professionals
+        </h1>
+
+        <div className="mt-4 flex flex-col gap-2 rounded-xl bg-surface-lowest p-2 shadow-raised sm:flex-row">
+          <fieldset className="flex shrink-0 gap-1 rounded-lg bg-surface-low p-1 sm:w-64">
+            <legend className="sr-only">Search for</legend>
+            {(["services", "professionals"] as const).map((item) => (
+              <button
+                key={item}
+                type="button"
+                aria-pressed={mode === item}
+                onClick={() => changeMode(item)}
+                className={`interactive-control min-h-10 flex-1 rounded-md px-2 text-sm font-semibold capitalize focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
+                  mode === item ? "bg-surface-lowest text-primary shadow-card" : "text-on-variant"
+                }`}
+              >
+                {item}
+              </button>
+            ))}
+          </fieldset>
+          <label className="sr-only" htmlFor="browse-query">
+            {mode === "services" ? "Search a service or trade" : "Search by professional name"}
+          </label>
+          <input
+            id="browse-query"
+            value={query}
+            onChange={(event) => updateFilter("q", event.target.value)}
+            placeholder={mode === "services" ? "Search a service or trade" : "Search by professional name"}
+            className="h-12 w-full min-w-0 flex-1 rounded-lg bg-surface-low px-4 py-3 text-on-surface sm:px-3 sm:py-0"
+          />
+        </div>
+
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+          <button
+            type="button"
+            aria-expanded={filtersOpen}
+            aria-controls="browse-filters"
+            onClick={() => setFiltersOpen((open) => !open)}
+            className="interactive-control inline-flex min-h-11 items-center gap-2 rounded-lg bg-surface-lowest px-3 text-sm font-semibold text-primary shadow-card focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          >
+            <Icon name="tune" className="text-[20px]" />
+            Filters
+            {activeFilterCount > 0 ? (
+              <span className="rounded-full bg-primary-container px-2 py-0.5 text-xs text-on-primary">
+                {activeFilterCount}
+              </span>
+            ) : null}
+          </button>
+          <p className="text-sm text-on-variant" aria-live="polite">
+            {results.length} {results.length === 1 ? "professional" : "professionals"}
+          </p>
+        </div>
+
+        {filtersOpen ? (
+          <section id="browse-filters" aria-label="Browse filters" className="mt-3 rounded-xl bg-surface-lowest p-4 shadow-card sm:p-5">
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-primary">Filters</h2>
+              <button type="button" className="min-h-11 text-xs font-semibold text-secondary" onClick={resetFilters}>
+                Reset filters
+              </button>
+            </div>
+            <div className="grid gap-5 sm:grid-cols-2">
+              {mode === "services" ? (
+                <fieldset>
+                  <legend className="mb-2 text-xs font-semibold uppercase tracking-wider text-primary">Category</legend>
+                  <div className="grid gap-x-4 sm:grid-cols-2">
+                    <label className="mb-1 flex min-h-11 items-center gap-2 text-sm">
+                      <input type="radio" name="category" checked={!category} onChange={() => updateFilter("category", "")} />
+                      All categories
+                    </label>
+                    {CATEGORIES.map((item) => (
+                      <label key={item.id} className="mb-1 flex min-h-11 items-center gap-2 text-sm">
+                        <input type="radio" name="category" checked={category === item.id} onChange={() => updateFilter("category", item.id)} />
+                        {item.name}
+                      </label>
+                    ))}
+                  </div>
+                </fieldset>
+              ) : null}
+              <div>
+                <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-primary" htmlFor="filter-area">
+                  Service area
+                </label>
+                <select
+                  id="filter-area"
+                  value={area}
+                  onChange={(event) => updateFilter("area", event.target.value)}
+                  className="h-11 w-full rounded-lg bg-surface-low px-3 text-sm"
+                >
+                  <option value="">All sub-cities</option>
+                  {SUB_CITIES.map((item) => <option key={item} value={item}>{item}</option>)}
+                </select>
+              </div>
+            </div>
+          </section>
+        ) : null}
+      </section>
+
+      <section className="mt-6" aria-label="Professional search results">
+        {results.length === 0 ? (
+          <EmptyState
+            title={mode === "services" ? "No professionals offer matching services" : "No professionals match that name"}
+            body="Try another search term, category, or service area."
+            action={{ label: "Clear search and filters", onClick: clearSearch }}
+          />
+        ) : (
+          <div className="grid gap-4 md:grid-cols-2">
+            {visibleProfessionals.map((professional) => (
+              <ProfessionalCard key={professional.id} professional={professional} />
+            ))}
+          </div>
+        )}
+
+        {hasPreviousBatch || hasNextBatch ? (
+          <nav className="mt-6 flex items-center justify-center gap-2" aria-label="Professionals pagination">
             <button
               type="button"
-              className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-surface-lowest px-3 py-2 text-sm font-semibold text-primary shadow-card"
-              aria-expanded={filtersOpen}
-              onClick={() => setFiltersOpen((value) => !value)}
+              className="interactive-control inline-flex min-h-11 items-center justify-center gap-1 rounded-lg border border-outline-variant/50 px-3 text-sm font-semibold text-primary hover:bg-surface-low disabled:cursor-not-allowed disabled:opacity-40"
+              disabled={!hasPreviousBatch}
+              onClick={goToPreviousBatch}
             >
-              <Icon name="tune" className="text-[20px]" />
-              Filters
-              {activeFilterCount > 0 ? (
-                <span className="rounded-full bg-primary-container px-2 py-0.5 text-xs text-on-primary">
-                  {activeFilterCount}
-                </span>
-              ) : null}
+              <Icon name="chevron_left" />
+              Previous
             </button>
-            <p className="text-sm text-on-variant">
-              {results.length} {results.length === 1 ? "result" : "results"}
-            </p>
-          </div>
-          <div
-            className={`rounded-xl bg-surface-lowest p-4 shadow-card sm:p-5 lg:sticky lg:top-24 ${
-              filtersOpen ? "block" : "hidden lg:block"
-            }`}
-          >
-            <div className="mb-4 flex items-center justify-between">
-              <h1 className="text-lg font-semibold text-primary">Filters</h1>
-              <button
-                type="button"
-                className="min-h-11 text-xs font-semibold text-secondary"
-                onClick={() => setParams({})}
-              >
-                Reset
-              </button>
-            </div>
-            <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-primary" htmlFor="filter-query">
-              Search
-            </label>
-            <input
-              id="filter-query"
-              value={query}
-              onChange={(event) => update("q", event.target.value)}
-              placeholder="Name, service, or trade"
-              className="mb-4 h-11 w-full rounded-lg bg-surface-low px-3 text-sm"
-            />
-            <fieldset className="mb-4">
-              <legend className="mb-2 text-xs font-semibold uppercase tracking-wider text-primary">
-                Category
-              </legend>
-              <label className="mb-1 flex min-h-11 items-center gap-2 text-sm">
-                <input
-                  type="radio"
-                  name="category"
-                  checked={!category}
-                  onChange={() => update("category", "")}
-                />
-                All categories
-              </label>
-              {CATEGORIES.map((item) => (
-                <label key={item.id} className="mb-1 flex min-h-11 items-center gap-2 text-sm">
-                  <input
-                    type="radio"
-                    name="category"
-                    checked={category === item.id}
-                    onChange={() => update("category", item.id)}
-                  />
-                  {item.name}
-                </label>
-              ))}
-            </fieldset>
-            <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-primary" htmlFor="filter-area">
-              Service area
-            </label>
-            <select
-              id="filter-area"
-              value={area}
-              onChange={(event) => update("area", event.target.value)}
-              className="h-11 w-full rounded-lg bg-surface-low px-3 text-sm"
+            <button
+              type="button"
+              className="interactive-control inline-flex min-h-11 items-center justify-center gap-1 rounded-lg border border-outline-variant/50 px-3 text-sm font-semibold text-primary hover:bg-surface-low disabled:cursor-not-allowed disabled:opacity-40"
+              disabled={!hasNextBatch}
+              onClick={goToNextBatch}
             >
-              <option value="">All sub-cities</option>
-              {SUB_CITIES.map((item) => (
-                <option key={item} value={item}>
-                  {item}
-                </option>
-              ))}
-            </select>
-          </div>
-        </aside>
-        <section className="lg:col-span-9">
-          <div className="mb-4">
-            <h2 className="text-xl font-semibold text-primary sm:text-2xl">Available professionals</h2>
-            <p className="text-sm text-on-variant">
-              {results.length} {results.length === 1 ? "result" : "results"}
-              {category ? ` in ${CATEGORIES.find((item) => item.id === category)?.name ?? category}` : ""}
-              {area ? ` covering ${area}` : ""}
-            </p>
-          </div>
-          {results.length === 0 ? (
-            <EmptyState
-              title="No professionals match these filters"
-              body="Try another category, a broader area, or a shorter search term."
-              action={{ label: "Clear filters", onClick: () => setParams({}) }}
-            />
-          ) : (
-            <div className="grid gap-4 md:grid-cols-2">
-              {paginatedResults.map((professional) => (
-                <ProfessionalCard key={professional.id} professional={professional} />
-              ))}
-            </div>
-          )}
-          {results.length > RESULTS_PER_BATCH ? (
-            <nav className="mt-6 flex items-center justify-center gap-2" aria-label="Professionals pagination">
-              <button
-                type="button"
-                className="interactive-control inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-outline-variant/50 text-primary hover:bg-surface-low disabled:cursor-not-allowed disabled:opacity-40"
-                aria-label="Previous professionals"
-                disabled={!hasPreviousBatch}
-                onClick={goToPreviousPage}
-              >
-                <Icon name="chevron_left" />
-              </button>
-              <span className="px-2 text-sm text-on-variant">More professionals</span>
-              <button
-                type="button"
-                className="interactive-control inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-outline-variant/50 text-primary hover:bg-surface-low disabled:cursor-not-allowed disabled:opacity-40"
-                aria-label="Next professionals"
-                disabled={!hasNextBatch}
-                onClick={goToNextPage}
-              >
-                <Icon name="chevron_right" />
-              </button>
-            </nav>
-          ) : null}
-        </section>
-      </div>
+              Next
+              <Icon name="chevron_right" />
+            </button>
+          </nav>
+        ) : null}
+      </section>
     </div>
   )
 }
