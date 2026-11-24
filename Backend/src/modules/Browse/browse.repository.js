@@ -94,6 +94,7 @@ export async function browse_locations(professionals_id) {
       SELECT
         psa.professional_id,
         l.name
+        psa.is_primary
       FROM professional_service_areas psa
       JOIN locations l
         ON l.id = psa.location_id
