@@ -5,7 +5,6 @@ async function browse_controller (req ,res , next){
         filters: req.filters,
         pagination: req.pagination,
     });
-
     res.status(200).json({ professionals });
 }
 export default asyncHandler(browse_controller) ;
