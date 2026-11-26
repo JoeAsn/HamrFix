@@ -61,7 +61,7 @@ async function browse_professionals(queryValues) {
 
         -- Cursor pagination
         AND (
-          $5::integer IS NULL
+          $5::bigint IS NULL
           OR u.id < $5
         )
 

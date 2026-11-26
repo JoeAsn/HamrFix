@@ -9,7 +9,8 @@ type ApiProfessional = Omit<Partial<Professional>, "areas" | "services"> & {
   areas?: Array<{ name: string; is_primary: boolean; isPrimary?: boolean }>
   services?: Array<{ id: number | string; name: string; description?: string }>
 }
-type BrowseResponse = { professionals: ApiProfessional[] }
+type BrowseResponse = { professionals: ApiProfessional[]; nextCursor: string | null }
+type BrowsePage = { professionals: Professional[]; nextCursor: string | null }
 type ProfessionalResponse = { professional: ApiProfessional }
 
 async function request<T>(path: string): Promise<T> {
@@ -21,7 +22,7 @@ async function request<T>(path: string): Promise<T> {
   return response.json() as Promise<T>
 }
 
-export async function browseProfessionals(params: URLSearchParams): Promise<Professional[]> {
+export async function browseProfessionals(params: URLSearchParams): Promise<BrowsePage> {
   const query = new URLSearchParams()
   const name = params.get("q")
   const mode = params.get("mode") ?? "services"
@@ -35,19 +36,25 @@ export async function browseProfessionals(params: URLSearchParams): Promise<Prof
   }
   const location = params.get("area")
   if (location) query.set("location", location)
-  query.set("limit", "50")
-  const { professionals } = await request<BrowseResponse>(`/api/professionals/browse?${query}`)
-  return professionals.map((professional) => ({
-    ...professional,
-    id: String(professional.id),
-    profession: professional.profession ?? "Service professional",
-    bio: professional.bio ?? "",
-    areas: (professional.areas ?? []).map((area) => ({ name: area.name, isPrimary: area.isPrimary ?? area.is_primary })),
-    services: (professional.services ?? []).map((service) => ({ ...service, id: String(service.id) })),
-    phone: professional.phone ?? "",
-    telegram: professional.telegram ?? "",
-    photo: professional.photo ?? "",
-  }))
+  const cursor = params.get("cursor")
+  if (cursor) query.set("cursor", cursor)
+  query.set("limit", "4")
+  const { professionals, nextCursor } = await request<BrowseResponse>(`/api/professionals/browse?${query}`)
+  return {
+    professionals: professionals.map((professional) => ({
+      ...professional,
+      id: String(professional.id),
+      profession: professional.profession ?? "Service professional",
+      categoryId: professional.categoryId ?? "plumbing",
+      bio: professional.bio ?? "",
+      areas: (professional.areas ?? []).map((area) => ({ name: area.name, isPrimary: area.isPrimary ?? area.is_primary })),
+      services: (professional.services ?? []).map((service) => ({ ...service, id: String(service.id) })),
+      phone: professional.phone ?? "",
+      telegram: professional.telegram ?? "",
+      photo: professional.photo ?? "",
+    })),
+    nextCursor,
+  }
 }
 
 export async function getProfessionalDetails(id: string): Promise<Professional> {
@@ -56,6 +63,7 @@ export async function getProfessionalDetails(id: string): Promise<Professional> 
     ...professional,
     id: String(professional.id),
     profession: professional.profession ?? "Service professional",
+    categoryId: professional.categoryId ?? "plumbing",
     bio: professional.bio ?? "",
     services: (professional.services ?? []).map((service) => ({ ...service, id: String(service.id) })),
     phone: professional.phone ?? "",

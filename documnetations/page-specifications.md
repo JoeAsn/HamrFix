@@ -6,7 +6,7 @@ Explain Hamrfix and start discovery. Headline, search card with a Services/Profe
 
 ## Browse `/browse`
 
-List professionals using the selected search mode. Services is the default and matches profession/trade names plus offered service names and descriptions. Professionals matches profile names. Search/filter state is URL-backed (`q`, `category`, `area`, `mode`). The frontend sends the selected category name as a filter to `GET /api/professionals/browse`; the backend resolves it to the database ID before querying professionals. Each result includes its database `id`, which is used as the card key and profile route identifier. Loading, empty, and request error states are displayed. Search currently requests up to 50 results; client paging displays four at a time.
+List professionals using the selected search mode. Services is the default and matches profession/trade names plus offered service names and descriptions. Professionals matches profile names. Search/filter state is URL-backed (`q`, `category`, `area`, `mode`). The frontend sends the selected category name as a filter to `GET /api/professionals/browse`; the backend resolves it to the database ID before querying professionals. Results use cursor-based server pagination, with four results per request and a next cursor returned when another page is available. Each result includes its database `id`, which is used as the card key and profile route identifier. Loading, empty, and request error states are displayed.
 
 Each card shows professional photo or initials, name, profession, overview excerpt, up to three assigned locations, offered service names, and **View profile**. The primary location is marked with a **Primary** label.
 
