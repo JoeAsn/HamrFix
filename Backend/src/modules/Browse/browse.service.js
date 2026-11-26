@@ -1,11 +1,21 @@
-import { browse_professionals, browse_locations, browse_services } from "./browse.repository.js";
+import {
+  browse_professionals,
+  browse_locations,
+  browse_services,
+  find_category_by_name,
+} from "./browse.repository.js";
 
 async function browse_service({ filters = {}, pagination = {} } = {}) {
+  const category = filters.category
+    ? await find_category_by_name(filters.category)
+    : null;
+  if (filters.category && !category) return [];
+
   // Keep these positions in sync with the placeholders in the repository query.
   const queryValues = [
     filters.name ?? null,
     filters.service ?? null,
-    filters.category ?? null,
+    category ? String(category.id) : null,
     filters.location ?? null,
     pagination.cursor?.id ?? null,
     pagination.limit ?? 10,

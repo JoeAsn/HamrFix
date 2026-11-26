@@ -77,6 +77,14 @@ async function browse_professionals(queryValues) {
 }
 export { browse_professionals };
 
+export async function find_category_by_name(name) {
+  const result = await pool.query(
+    "SELECT id, name FROM categories WHERE name = $1",
+    [name]
+  );
+  return result.rows[0] ?? null;
+}
+
 export async function browse_services(professionals_id) {
   if (!professionals_id.length) return [];
   const result = await pool.query(

@@ -6,7 +6,7 @@ Explain Hamrfix and start discovery. Headline, search card with a Services/Profe
 
 ## Browse `/browse`
 
-List professionals using the selected search mode. Services is the default and matches profession/trade names plus offered service names and descriptions. Professionals matches profile names. Search/filter state is URL-backed (`q`, `category`, `area`, `mode`). Results are fetched from `GET /api/professionals/browse`; each result includes its database `id`, which is used as the card key and profile route identifier. Loading, empty, and request error states are displayed. Search currently requests up to 50 results; client paging displays four at a time.
+List professionals using the selected search mode. Services is the default and matches profession/trade names plus offered service names and descriptions. Professionals matches profile names. Search/filter state is URL-backed (`q`, `category`, `area`, `mode`). The frontend sends the selected category name as a filter to `GET /api/professionals/browse`; the backend resolves it to the database ID before querying professionals. Each result includes its database `id`, which is used as the card key and profile route identifier. Loading, empty, and request error states are displayed. Search currently requests up to 50 results; client paging displays four at a time.
 
 Each card shows professional photo or initials, name, profession, overview excerpt, up to three assigned locations, offered service names, and **View profile**. The primary location is marked with a **Primary** label.
 
@@ -15,6 +15,8 @@ Each card shows professional photo or initials, name, profession, overview excer
 Professional photo, name, profession, overview, services, and up to three assigned locations. The primary location is shown first with a **Primary** label and highlighted styling; additional locations use the secondary chip style. Only fields represented in the ER diagram are shown.
 
 The profile route reads `professionalId` with React Router `useParams()` and fetches the latest profile from `GET /api/professionals/:professionalId`. It does not use card state as the source of profile data. It displays loading, not found, and request error states. The API returns `{ professional }`, including the database ID and full service and area details.
+
+The backend mounts the public detail handler at `GET /api/professionals/:professionalId`. It returns published profiles and a 404 response when the ID is missing or not published.
 
 - Guest: create an account or log in to see contact.
 - Signed in: phone, Telegram, send a short message.

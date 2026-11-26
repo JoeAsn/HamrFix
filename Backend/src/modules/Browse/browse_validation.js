@@ -5,7 +5,7 @@ const browse_query_schema = z
   .object({
     name: z.string().trim().max(100).optional(),
     service: z.string().trim().max(100).optional(),
-    category: z.string().trim().optional(),
+    category: z.string().trim().max(100).optional(),
     mode: z.enum(["services", "professionals"]).optional(),
     location: z.string().trim().max(100).optional(),
     cursor: z.string().trim().optional().nullable(),

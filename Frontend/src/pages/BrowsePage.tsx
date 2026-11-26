@@ -29,7 +29,15 @@ export function BrowsePage() {
     let active = true
     setLoading(true)
     setError(false)
-    browseProfessionals(params).then((items) => { if (active) setResults(items) }).catch(() => { if (active) setError(true) }).finally(() => { if (active) setLoading(false) })
+    const requestParams = new URLSearchParams()
+    if (query) requestParams.set("q", query)
+    if (mode === "professionals") requestParams.set("mode", mode)
+    if (category) requestParams.set("category", category)
+    if (area) requestParams.set("area", area)
+    browseProfessionals(requestParams)
+      .then((items) => { if (active) setResults(items) })
+      .catch(() => { if (active) setError(true) })
+      .finally(() => { if (active) setLoading(false) })
     return () => { active = false }
   }, [query, mode, category, area])
   const cursor = cursorHistory[cursorHistory.length - 1]

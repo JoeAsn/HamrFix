@@ -1,8 +1,14 @@
-import type { Professional } from "./catalog"
+import { CATEGORIES, type Professional } from "./catalog"
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? ""
 
-type ApiProfessional = Partial<Professional> & { id: number | string; name: string; profession?: string; areas?: Array<{ name: string; is_primary: boolean; isPrimary?: boolean }> }
+type ApiProfessional = Omit<Partial<Professional>, "areas" | "services"> & {
+  id: number | string
+  name: string
+  profession?: string
+  areas?: Array<{ name: string; is_primary: boolean; isPrimary?: boolean }>
+  services?: Array<{ id: number | string; name: string; description?: string }>
+}
 type BrowseResponse = { professionals: ApiProfessional[] }
 type ProfessionalResponse = { professional: ApiProfessional }
 
@@ -24,7 +30,8 @@ export async function browseProfessionals(params: URLSearchParams): Promise<Prof
   const category = params.get("category")
   if (category) {
     const categoryRecord = CATEGORIES.find((item) => item.id === category)
-    if (categoryRecord) query.set("category", categoryRecord.name)
+    if (!categoryRecord) throw new Error("unknown-category")
+    query.set("category", categoryRecord.name)
   }
   const location = params.get("area")
   if (location) query.set("location", location)
@@ -36,11 +43,11 @@ export async function browseProfessionals(params: URLSearchParams): Promise<Prof
     profession: professional.profession ?? "Service professional",
     bio: professional.bio ?? "",
     areas: (professional.areas ?? []).map((area) => ({ name: area.name, isPrimary: area.isPrimary ?? area.is_primary })),
-    services: professional.services ?? [],
+    services: (professional.services ?? []).map((service) => ({ ...service, id: String(service.id) })),
     phone: professional.phone ?? "",
     telegram: professional.telegram ?? "",
     photo: professional.photo ?? "",
-  })) as Professional[]
+  }))
 }
 
 export async function getProfessionalDetails(id: string): Promise<Professional> {
@@ -50,7 +57,7 @@ export async function getProfessionalDetails(id: string): Promise<Professional> 
     id: String(professional.id),
     profession: professional.profession ?? "Service professional",
     bio: professional.bio ?? "",
-    services: professional.services ?? [],
+    services: (professional.services ?? []).map((service) => ({ ...service, id: String(service.id) })),
     phone: professional.phone ?? "",
     telegram: professional.telegram ?? "",
     photo: professional.photo ?? "",
