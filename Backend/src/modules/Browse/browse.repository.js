@@ -24,7 +24,11 @@ async function browse_professionals(queryValues) {
             JOIN services s
               ON s.id = ps.service_id
             WHERE ps.professional_id = u.id
-              AND (s.name ILIKE '%' || $2 || '%' OR s.details ILIKE '%' || $2 || '%')
+              AND (
+                s.name ILIKE '%' || $2 || '%'
+                OR s.details ILIKE '%' || $2 || '%'
+                OR pp.profession ILIKE '%' || $2 || '%'
+              )
           )
         )
 
@@ -39,7 +43,7 @@ async function browse_professionals(queryValues) {
             JOIN categories c
               ON c.id = s.category_id
             WHERE ps.professional_id = u.id
-              AND c.name ILIKE '%' || $3 || '%'
+              AND c.id::text = $3
           )
         )
 

@@ -18,11 +18,14 @@ async function request<T>(path: string): Promise<T> {
 export async function browseProfessionals(params: URLSearchParams): Promise<Professional[]> {
   const query = new URLSearchParams()
   const name = params.get("q")
-  if (name) query.set("name", name)
-  if (params.get("mode") !== "professionals" && name) query.set("service", name)
-  if (params.get("mode")) query.set("mode", params.get("mode")!)
+  const mode = params.get("mode") ?? "services"
+  if (name && mode === "professionals") query.set("name", name)
+  if (name && mode === "services") query.set("service", name)
   const category = params.get("category")
-  if (category) query.set("category", category)
+  if (category) {
+    const categoryRecord = CATEGORIES.find((item) => item.id === category)
+    if (categoryRecord) query.set("category", categoryRecord.name)
+  }
   const location = params.get("area")
   if (location) query.set("location", location)
   query.set("limit", "50")
