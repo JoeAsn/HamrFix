@@ -1,18 +1,18 @@
 
 import pool from "../../config/database.js";
 
-export async function browse_professionals(queryValues) {
+async function browse_professionals(queryValues) {
   const result = await pool.query(
     `
-      SELECT
-        p.id,
-        p.name
-      FROM professionals p
+      SELECT u.id, u.name, u.phone AS resident_phone, u.photo AS resident_photo,
+        pp.profession, pp.overview AS bio, pp.contact_phone AS phone,
+        pp.telegram, pp.professional_photo AS photo
+      FROM professional_profiles pp JOIN users u ON u.id = pp.user_id
       WHERE
         -- Professional name filter
         (
           $1::text IS NULL
-          OR p.name ILIKE '%' || $1 || '%'
+          OR u.name ILIKE '%' || $1 || '%'
         )
 
         -- Service filter
@@ -23,8 +23,8 @@ export async function browse_professionals(queryValues) {
             FROM professional_services ps
             JOIN services s
               ON s.id = ps.service_id
-            WHERE ps.professional_id = p.id
-              AND s.name ILIKE '%' || $2 || '%'
+            WHERE ps.professional_id = u.id
+              AND (s.name ILIKE '%' || $2 || '%' OR s.details ILIKE '%' || $2 || '%')
           )
         )
 
@@ -38,8 +38,8 @@ export async function browse_professionals(queryValues) {
               ON s.id = ps.service_id
             JOIN categories c
               ON c.id = s.category_id
-            WHERE ps.professional_id = p.id
-              AND c.name = $3
+            WHERE ps.professional_id = u.id
+              AND c.name ILIKE '%' || $3 || '%'
           )
         )
 
@@ -49,20 +49,21 @@ export async function browse_professionals(queryValues) {
           OR EXISTS (
             SELECT 1
             FROM professional_service_areas psa
-            JOIN service_areas sa
-              ON sa.id = psa.area_id
-            WHERE psa.professional_id = p.id
-              AND sa.name = $4
+            JOIN locations l ON l.id = psa.location_id
+            WHERE psa.professional_id = u.id
+              AND l.name = $4
           )
         )
 
         -- Cursor pagination
         AND (
           $5::integer IS NULL
-          OR p.id < $5
+          OR u.id < $5
         )
 
-      ORDER BY p.id DESC
+        AND pp.status = 'published'
+
+      ORDER BY u.id DESC
       LIMIT $6;
     `,
     queryValues
@@ -70,12 +71,15 @@ export async function browse_professionals(queryValues) {
 
   return result.rows;
 }
+export { browse_professionals };
 
 export async function browse_services(professionals_id) {
+  if (!professionals_id.length) return [];
   const result = await pool.query(
     `
       SELECT
         ps.professional_id,
+        s.id,
         s.name
       FROM professional_services ps
       JOIN services s
@@ -89,19 +93,46 @@ export async function browse_services(professionals_id) {
 }
 
 export async function browse_locations(professionals_id) {
+  if (!professionals_id.length) return [];
   const result = await pool.query(
     `
       SELECT
         psa.professional_id,
-        l.name
+        l.name,
         psa.is_primary
       FROM professional_service_areas psa
       JOIN locations l
         ON l.id = psa.location_id
-      WHERE psa.professional_id = ANY($1::integer[]);
+      WHERE psa.professional_id = ANY($1::integer[])
+      ORDER BY psa.is_primary DESC;
     `,
     [professionals_id]
   );
 
   return result.rows;
+}
+
+export async function get_professional(id) {
+  const result = await pool.query(
+     `SELECT u.id, u.name, u.phone AS resident_phone, u.photo AS resident_photo,
+            pp.profession, pp.overview AS bio, pp.contact_phone AS phone, pp.telegram,
+            pp.professional_photo AS photo
+     FROM professional_profiles pp JOIN users u ON u.id = pp.user_id
+     WHERE u.id = $1 AND pp.status = 'published'`,
+    [id],
+  );
+  if (!result.rows[0]) return null;
+  const professional = result.rows[0];
+  const services = await pool.query(
+    `SELECT s.id, s.name, s.details AS description FROM professional_services ps
+     JOIN services s ON s.id = ps.service_id WHERE ps.professional_id = $1`,
+    [id],
+  );
+  const areas = await pool.query(
+    `SELECT l.name, psa.is_primary FROM professional_service_areas psa
+     JOIN locations l ON l.id = psa.location_id WHERE psa.professional_id = $1
+     ORDER BY psa.is_primary DESC, l.name`,
+    [id],
+  );
+  return { ...professional, services: services.rows, areas: areas.rows };
 }

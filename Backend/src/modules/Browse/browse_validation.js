@@ -6,6 +6,7 @@ const browse_query_schema = z
     name: z.string().trim().max(100).optional(),
     service: z.string().trim().max(100).optional(),
     category: z.string().trim().optional(),
+    mode: z.enum(["services", "professionals"]).optional(),
     location: z.string().trim().max(100).optional(),
     cursor: z.string().trim().optional().nullable(),
     limit: z.coerce.number().int().min(1).max(50).default(10),

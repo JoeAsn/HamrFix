@@ -1,15 +1,19 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Link, useSearchParams } from "react-router-dom"
 import { EmptyState } from "../components/EmptyState"
 import { Icon } from "../components/Icon"
 import { ProfessionalCard } from "../components/ProfessionalCard"
-import { CATEGORIES, SUB_CITIES, filterProfessionals, type DiscoveryMode } from "../data/catalog"
+import { CATEGORIES, SUB_CITIES, type DiscoveryMode, type Professional } from "../data/catalog"
+import { browseProfessionals } from "../data/api"
 
 const RESULTS_PER_BATCH = 4
 
 export function BrowsePage() {
   const [params, setParams] = useSearchParams()
   const [filtersOpen, setFiltersOpen] = useState(false)
+  const [results, setResults] = useState<Professional[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
   const query = params.get("q") ?? ""
   const category = params.get("category") ?? ""
   const area = params.get("area") ?? ""
@@ -21,7 +25,13 @@ export function BrowsePage() {
   })
   const cursorHistory = cursorState.key === browseStateKey ? cursorState.history : [null]
 
-  const results = filterProfessionals(query, mode === "services" ? category : "", area, mode)
+  useEffect(() => {
+    let active = true
+    setLoading(true)
+    setError(false)
+    browseProfessionals(params).then((items) => { if (active) setResults(items) }).catch(() => { if (active) setError(true) }).finally(() => { if (active) setLoading(false) })
+    return () => { active = false }
+  }, [query, mode, category, area])
   const cursor = cursorHistory[cursorHistory.length - 1]
   const startIndex = cursor
     ? Math.max(0, results.findIndex((professional) => professional.id === cursor) + 1)
@@ -179,7 +189,7 @@ export function BrowsePage() {
       </section>
 
       <section className="mt-6" aria-label="Professional search results">
-        {results.length === 0 ? (
+        {loading ? <p role="status" className="py-8 text-center text-sm text-on-variant">Loading professionals…</p> : error ? <p role="alert" className="py-8 text-center text-sm text-on-variant">Could not load professionals. Please try again.</p> : results.length === 0 ? (
           <EmptyState
             title={mode === "services" ? "No professionals offer matching services" : "No professionals match that name"}
             body="Try another search term, category, or service area."

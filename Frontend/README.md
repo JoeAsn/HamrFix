@@ -1,32 +1,14 @@
-# React + TypeScript + Vite
+# Hamrfix frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+React, TypeScript, Vite, and React Router frontend.
 
-Currently, two official plugins are available:
+## Professional directory API
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Set `VITE_API_BASE_URL` to the backend origin when frontend and API are hosted on different origins. When unset, requests use the current origin.
 
-## React Compiler
+- `GET /api/professionals/browse` returns directory records with unique backend IDs. IDs key professional cards and identify their profile routes.
+- Selecting a card navigates to `/professionals/:professionalId`.
+- The profile route reads `professionalId` with React Router's `useParams()` and fetches the latest details from `GET /api/professionals/:professionalId`.
+- Browse and profile pages display loading and request error states; unknown profile IDs display not found.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
-```
-
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+Professional records and profile views use ERD-backed fields: user ID/name/phone/photo, professional profession/overview/contact phone/Telegram/photo/status, offered service IDs/names/details, and assigned location names with their primary flag. Experience years, languages, and a stored profile category are not in this schema.

@@ -1,4 +1,4 @@
-import browse_professionals, { browse_locations, browse_services } from "./browse.repository.js";
+import { browse_professionals, browse_locations, browse_services } from "./browse.repository.js";
 
 async function browse_service({ filters = {}, pagination = {} } = {}) {
   // Keep these positions in sync with the placeholders in the repository query.
@@ -12,24 +12,25 @@ async function browse_service({ filters = {}, pagination = {} } = {}) {
   ];
 
   const professionals = await browse_professionals(queryValues);
+  if (!professionals.length) return [];
   const professionals_id = [] ;
   professionals.forEach(professional => {
     professionals_id.push(professional.id)
   });
   const services = await browse_services(professionals_id) ;
   const service_areas = await browse_locations(professionals_id) ;
-  const professionalsMap = new map(
+  const professionalsMap = new Map(
     professionals.map(professional =>{
-      return [professional.id , {...professional , services : [] , service_areas : []}]
+      return [professional.id , {...professional , services : [], areas : []}]
     })
   )
   services.forEach(service => {
-    const professional = professionalsMap.get(professional.id) ;
-    professional.service.push(service.name)
+    const profile = professionalsMap.get(service.professional_id);
+    profile.services.push({ id: service.id, name: service.name })
   });
   service_areas.forEach(location=>{
-    const professional = professionalsMap.get(professional.id) ;
-    professional.service_areas.push(location.name)
+    const profile = professionalsMap.get(location.professional_id);
+    profile.areas.push({ name: location.name, isPrimary: location.is_primary })
   })
 
   return [...professionalsMap.values()] ;

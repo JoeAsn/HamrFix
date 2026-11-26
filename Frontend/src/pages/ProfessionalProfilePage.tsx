@@ -1,18 +1,32 @@
 import { Link, useParams } from "react-router-dom"
+import { useEffect, useState } from "react"
 import { useAuth } from "../auth/AuthContext"
 import { Icon } from "../components/Icon"
-import { getCategory, getProfessional } from "../data/catalog"
+import type { Professional } from "../data/catalog"
+import { getProfessionalDetails } from "../data/api"
 
 export function ProfessionalProfilePage() {
-  const { id = "" } = useParams()
+  const { professionalId = "" } = useParams()
   const { session } = useAuth()
-  const professional = getProfessional(id)
+  const [professional, setProfessional] = useState<Professional | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
+  useEffect(() => {
+    let active = true
+    setLoading(true)
+    setError(false)
+    getProfessionalDetails(professionalId).then((data) => { if (active) setProfessional(data) }).catch((reason: Error) => { if (active) { setError(reason.message !== "not-found"); setProfessional(null) } }).finally(() => { if (active) setLoading(false) })
+    return () => { active = false }
+  }, [professionalId])
+
+  if (loading) return <p role="status" className="mx-auto max-w-xl px-4 py-16 text-center text-sm text-on-variant">Loading professional…</p>
+  if (error) return <div role="alert" className="mx-auto max-w-xl px-4 py-16 text-center"><h1 className="text-2xl font-semibold text-primary">Could not load professional</h1><Link to="/browse" className="mt-4 inline-flex text-sm font-semibold text-secondary">Back to browse</Link></div>
 
   if (!professional) {
     return (
       <div className="mx-auto max-w-xl px-4 py-16 text-center">
         <h1 className="text-2xl font-semibold text-primary">Professional not found</h1>
-        <p className="mt-2 text-sm text-on-variant">This profile is not in the current directory.</p>
+        <p className="mt-2 text-sm text-on-variant">This profile is not in the directory.</p>
         <Link to="/browse" className="mt-4 inline-flex text-sm font-semibold text-secondary">
           Back to browse
         </Link>
@@ -20,7 +34,6 @@ export function ProfessionalProfilePage() {
     )
   }
 
-  const category = getCategory(professional.categoryId)
   const canSeeContact = Boolean(session)
 
   return (
@@ -55,20 +68,18 @@ export function ProfessionalProfilePage() {
                 <h1 className="text-2xl font-semibold text-primary sm:text-3xl">{professional.name}</h1>
                 <p className="mt-1 text-on-variant">
                   {professional.profession}
-                  {category ? ` · ${category.name}` : ""} · {professional.yearsExperience}+ years
                 </p>
                 <div className="mt-3 flex flex-wrap gap-2">
-                  {professional.areas.slice(0, 3).map((area, index) => (
-                    <span key={area} className={`inline-flex min-h-9 items-center gap-1 rounded-full px-3 py-1.5 text-xs font-semibold ${index === 0 ? "bg-primary-container text-on-primary" : "border border-outline-variant/40 bg-surface-low text-primary-container"}`}>
-                      {index === 0 ? <span className="material-symbols-outlined text-[15px]" aria-hidden="true">star</span> : null}
-                      {area}{index === 0 ? <span className="ml-0.5">· Primary</span> : null}
+                  {professional.areas.slice(0, 3).map((area) => (
+                    <span key={area.name} className={`inline-flex min-h-9 items-center gap-1 rounded-full px-3 py-1.5 text-xs font-semibold ${area.isPrimary ? "bg-primary-container text-on-primary" : "border border-outline-variant/40 bg-surface-low text-primary-container"}`}>
+                      {area.isPrimary ? <span className="material-symbols-outlined text-[15px]" aria-hidden="true">star</span> : null}
+                      {area.name}{area.isPrimary ? <span className="ml-0.5">· Primary</span> : null}
                     </span>
                   ))}
                 </div>
               </div>
             </div>
             <p className="mt-6 text-sm leading-6 text-on-variant">{professional.bio}</p>
-            <p className="mt-3 text-sm text-on-variant">Languages: {professional.languages.join(", ")}</p>
           </div>
           <section className="mt-5 rounded-xl bg-surface-lowest p-4 shadow-card sm:mt-6 sm:p-6">
             <h2 className="text-xl font-semibold text-primary">Services offered</h2>
@@ -109,10 +120,14 @@ export function ProfessionalProfilePage() {
               </>
             ) : (
               <>
-                <h2 className="text-lg font-semibold text-primary">Sign in to contact</h2>
+                <h2 className="text-lg font-semibold text-primary">Contact this professional</h2>
                 <p className="mt-2 text-sm text-on-variant">
-                  Phone and Telegram are shown after you create a Hamrfix account. The same account can later list a trade.
+                  Reach this professional directly using the public contact details below.
                 </p>
+                <div className="mt-4 space-y-3">
+                  <a href={`tel:${professional.phone.replace(/\s/g, "")}`} className="flex min-h-11 items-center rounded-lg bg-surface-low p-3 text-sm font-semibold text-primary">{professional.phone}</a>
+                  {professional.telegram ? <a href={`https://t.me/${professional.telegram.replace("@", "")}`} className="flex min-h-11 items-center rounded-lg bg-surface-low p-3 text-sm font-semibold text-primary">Telegram {professional.telegram}</a> : null}
+                </div>
                 <Link
                   to={`/register?next=/professionals/${professional.id}`}
                   className="interactive-control mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-lg bg-primary-container px-4 py-3 text-sm font-semibold text-on-primary hover:bg-primary"

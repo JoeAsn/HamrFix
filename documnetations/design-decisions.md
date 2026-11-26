@@ -82,7 +82,7 @@ Plumbing, Electrical, Carpentry, Appliances, Painting, and Cleaning. These six c
 
 ### Search
 
-Discovery offers two modes: **Services** (default), which searches a professional's trade and offered service text, and **Professionals**, which searches names. Home preserves its sub-city control and passes the selected mode to Browse; Browse keeps the selector beside the query input. Filters remain separate from search: the Filters button and result count sit below the search row, and the panel contains category (Services only) and sub-city filters. Query, mode, and filter state are URL-backed; local cursor history is reset on any of those changes. The Browse API is not implemented, so this interaction currently filters the local catalog and must not be described as an API integration.
+Discovery offers two modes: **Services** (default), which searches offered service text, and **Professionals**, which searches names. Query, mode, and filter state are URL-backed. Browse results load from `GET /api/professionals/browse`; backend IDs identify cards and profile routes. Profiles load current data from `GET /api/professionals/:professionalId`.
 
 The Home page owns the in-progress home form state and writes the selected values into the Browse URL on submit. Browse reads `q`, `mode`, `category`, and `area` from the URL; the shared catalog filter applies mode-specific matching, while Browse owns the open/closed filter panel and local anchor history for Previous/Next navigation. No discovery request or network response state exists yet.
 
