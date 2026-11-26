@@ -6,13 +6,15 @@ Explain Hamrfix and start discovery. Headline, search card with a Services/Profe
 
 ## Browse `/browse`
 
-List professionals using the selected search mode. Services is the default and matches profession/trade names plus offered service names and descriptions. Professionals matches profile names, including partial names. The search mode selector is visually connected to the query input. A separate **Filters** button appears below search beside the result count and toggles the filter panel. Category filtering is available in Services mode; service area filtering is available in both modes. Search and filters can be combined. Changing mode, query, or filters resets cursor history to the first batch. Results are shown four at a time with Previous/Next controls and no numbered pages. Query params are `q`, `category`, `area`, and `mode`; omit `mode` for Services, or set `mode=professionals`. Search/filter state is URL-backed; cursor history is in client state. The local catalog uses the last visible professional ID as its continuation anchor. There is no Browse API contract yet, so no network cursor, asynchronous loading state, stale-request handling, or request error state is implemented.
+List professionals using the selected search mode. Services is the default and matches profession/trade names plus offered service names and descriptions. Professionals matches profile names. Search/filter state is URL-backed (`q`, `category`, `area`, `mode`). Results are fetched from `GET /api/professionals/browse`; each result includes its database `id`, which is used as the card key and profile route identifier. Loading, empty, and request error states are displayed. Search currently requests up to 50 results; client paging displays four at a time.
 
-Each card shows photo or initials, name, profession, years, bio excerpt, up to three area chips, service names, and **View profile**. The first area is the primary area and is marked with a **Primary** label and highlighted styling; remaining areas are additional service areas.
+Each card shows professional photo or initials, name, profession, overview excerpt, up to three assigned locations, offered service names, and **View profile**. The primary location is marked with a **Primary** label.
 
-## Professional profile `/professionals/:id`
+## Professional profile `/professionals/:professionalId`
 
-Photo, name, profession, category, years, bio, languages, services, and up to three service areas. The primary area is shown first with a **Primary** label and highlighted styling; additional areas use the secondary chip style.
+Professional photo, name, profession, overview, services, and up to three assigned locations. The primary location is shown first with a **Primary** label and highlighted styling; additional locations use the secondary chip style. Only fields represented in the ER diagram are shown.
+
+The profile route reads `professionalId` with React Router `useParams()` and fetches the latest profile from `GET /api/professionals/:professionalId`. It does not use card state as the source of profile data. It displays loading, not found, and request error states. The API returns `{ professional }`, including the database ID and full service and area details.
 
 - Guest: create an account or log in to see contact.
 - Signed in: phone, Telegram, send a short message.

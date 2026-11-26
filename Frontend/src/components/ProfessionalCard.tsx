@@ -1,8 +1,9 @@
-import { Link } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import type { Professional } from "../data/catalog"
 import { Icon } from "./Icon"
 
 export function ProfessionalCard({ professional }: { professional: Professional }) {
+  const navigate = useNavigate()
   const initials = professional.name
     .split(" ")
     .map((part) => part[0])
@@ -10,7 +11,7 @@ export function ProfessionalCard({ professional }: { professional: Professional 
     .slice(0, 2)
 
   return (
-    <article className="flex flex-col rounded-xl border border-outline-variant/40 bg-surface-lowest p-5 shadow-card">
+    <article role="link" tabIndex={0} onClick={() => navigate(`/professionals/${professional.id}`)} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") navigate(`/professionals/${professional.id}`) }} className="flex cursor-pointer flex-col rounded-xl border border-outline-variant/40 bg-surface-lowest p-5 shadow-card">
       <div className="flex items-start gap-3">
         {professional.photo ? (
           <img
@@ -26,16 +27,16 @@ export function ProfessionalCard({ professional }: { professional: Professional 
         <div className="min-w-0">
           <h3 className="text-lg font-semibold text-primary">{professional.name}</h3>
           <p className="text-sm text-on-variant">
-            {professional.profession} · {professional.yearsExperience}+ years
+            {professional.profession}
           </p>
         </div>
       </div>
       <p className="mt-3 line-clamp-2 text-sm text-on-variant">{professional.bio}</p>
       <div className="mt-3 flex flex-wrap gap-1.5">
-        {professional.areas.slice(0, 3).map((area, index) => (
-          <span key={area} className={`inline-flex min-h-8 items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold ${index === 0 ? "bg-primary-container text-on-primary" : "border border-outline-variant/40 bg-surface-low text-primary-container"}`}>
-            {index === 0 ? <span className="material-symbols-outlined text-[14px]" aria-hidden="true">star</span> : null}
-            {area}{index === 0 ? <span className="ml-0.5">· Primary</span> : null}
+        {professional.areas.slice(0, 3).map((area) => (
+          <span key={area.name} className={`inline-flex min-h-8 items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold ${area.isPrimary ? "bg-primary-container text-on-primary" : "border border-outline-variant/40 bg-surface-low text-primary-container"}`}>
+            {area.isPrimary ? <span className="material-symbols-outlined text-[14px]" aria-hidden="true">star</span> : null}
+            {area.name}{area.isPrimary ? <span className="ml-0.5">· Primary</span> : null}
           </span>
         ))}
       </div>
@@ -46,13 +47,10 @@ export function ProfessionalCard({ professional }: { professional: Professional 
           .join(" · ")}
       </p>
       <div className="mt-4 flex gap-2 border-t border-outline-variant/30 pt-4">
-        <Link
-          to={`/professionals/${professional.id}`}
-          className="interactive-control inline-flex flex-1 items-center justify-center gap-1 rounded-lg bg-primary-container px-3 py-2.5 text-sm font-semibold text-on-primary hover:bg-primary"
-        >
+        <span className="inline-flex flex-1 items-center justify-center gap-1 rounded-lg bg-primary-container px-3 py-2.5 text-sm font-semibold text-on-primary">
           View profile
           <Icon name="arrow_forward" className="text-[16px]" />
-        </Link>
+        </span>
       </div>
     </article>
   )

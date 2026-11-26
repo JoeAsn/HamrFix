@@ -35,6 +35,6 @@ Primary action: **Edit listing** / **Save profile**.
 - Home discovery retains its sub-city selector and adds the same Services/Professionals mode language used on Browse. The placeholder updates to “Search a service or trade” or “Search by professional name.”
 - Browse places the mode selector beside the search input. Its independent Filters button and result count sit below search; the button expands category (Services only) and service area filters.
 - Search and filter values remain in the URL when moving between result batches. Mode, query, and filter changes return to the first local cursor batch.
-- The current catalog filtering is synchronous. There is no request loading or request error state until a Browse API exists; do not present the local empty state as an API failure.
+- Browse results load from `GET /api/professionals/browse` and display loading and request error states. Empty results display the matching-search empty state.
 - Unknown professional IDs and unknown routes link home or to browse.
 - Forms show validation as an inline alert (password length, missing services, empty message).

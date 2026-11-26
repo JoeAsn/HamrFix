@@ -58,18 +58,17 @@ export type CategoryId = (typeof CATEGORIES)[number]["id"]
 export type ServiceOffering = {
   id: string
   name: string
-  description: string
+  description?: string
 }
+
+export type ProfessionalArea = { name: string; isPrimary: boolean }
 
 export type Professional = {
   id: string
   name: string
   profession: string
-  categoryId: CategoryId
   bio: string
-  yearsExperience: number
-  languages: string[]
-  areas: SubCity[]
+  areas: ProfessionalArea[]
   services: ServiceOffering[]
   phone: string
   telegram: string
@@ -83,11 +82,8 @@ export const PROFESSIONALS: Professional[] = [
     id: "abebe-mekonnen",
     name: "Abebe Mekonnen",
     profession: "Plumber",
-    categoryId: "plumbing",
     bio: "I install and repair residential plumbing systems across eastern and central Addis Ababa. Residents can contact me directly to describe the job and agree on a visit.",
-    yearsExperience: 12,
-    languages: ["Amharic", "English"],
-    areas: ["Bole", "Kirkos", "Yeka", "Lemi Kura"],
+    areas: [{ name: "Bole", isPrimary: true }, { name: "Kirkos", isPrimary: false }, { name: "Yeka", isPrimary: false }, { name: "Lemi Kura", isPrimary: false }],
     services: [
       {
         id: "pipe-install",

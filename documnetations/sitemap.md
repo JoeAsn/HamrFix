@@ -5,8 +5,8 @@ Routes are defined in `app/src/App.tsx`.
 ```text
 /                               Home
 /browse                         Directory
-/professionals/:id              Public profile
-/professionals/:id/contact      Contact note
+/professionals/:professionalId  Public profile (loads GET /api/professionals/:professionalId)
+/professionals/:professionalId/contact      Contact note
 /login                          Log in
 /register                       Register
 /about                          About
