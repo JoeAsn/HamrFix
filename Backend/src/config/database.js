@@ -2,8 +2,7 @@ import { Pool } from "pg";
 import validateEnv from "./validate.env.js";
 
 const validatedEnv = validateEnv();
-const env = validatedEnv.data;
-
+const env = validatedEnv;
 const pool = new Pool({
   host: env.DB_HOST,
   port: env.DB_PORT,
