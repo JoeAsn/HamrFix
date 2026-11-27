@@ -11,7 +11,18 @@ type ApiProfessional = Omit<Partial<Professional>, "areas" | "services"> & {
 }
 type BrowseResponse = { professionals: ApiProfessional[]; nextCursor: string | null }
 type BrowsePage = { professionals: Professional[]; nextCursor: string | null }
-type ProfessionalResponse = { professional: ApiProfessional }
+type ProfessionalDetailsResponse =
+  | { success: false; message: string }
+  | {
+      name: string
+      profession: string
+      overview: string | null
+      contact_phone: string
+      telegram: string | null
+      professional_photo: string | null
+      services: Array<{ name: string; details: string | null }>
+      areas: Array<{ name: string; is_primary: boolean }>
+    }
 
 async function request<T>(path: string): Promise<T> {
   const response = await fetch(`${API_BASE_URL}${path}`)
@@ -58,17 +69,27 @@ export async function browseProfessionals(params: URLSearchParams): Promise<Brow
 }
 
 export async function getProfessionalDetails(id: string): Promise<Professional> {
-  const { professional } = await request<ProfessionalResponse>(`/api/professionals/${encodeURIComponent(id)}`)
+  const professional = await request<ProfessionalDetailsResponse>(`/api/professional/${encodeURIComponent(id)}`)
+  if ("message" in professional) {
+    const message = professional.message.toLowerCase()
+    const isNotFound = message.includes("does not exist") || message.startsWith("invalid")
+    throw new Error(isNotFound ? "not-found" : "request-failed")
+  }
+
   return {
-    ...professional,
-    id: String(professional.id),
-    profession: professional.profession ?? "Service professional",
-    categoryId: professional.categoryId ?? "plumbing",
-    bio: professional.bio ?? "",
-    services: (professional.services ?? []).map((service) => ({ ...service, id: String(service.id) })),
-    phone: professional.phone ?? "",
+    id,
+    name: professional.name,
+    profession: professional.profession,
+    categoryId: "plumbing",
+    bio: professional.overview ?? "",
+    services: professional.services.map((service, index) => ({
+      id: `${id}-service-${index}`,
+      name: service.name,
+      description: service.details ?? "",
+    })),
+    phone: professional.contact_phone,
     telegram: professional.telegram ?? "",
-    photo: professional.photo ?? "",
-    areas: (professional.areas ?? []).map((area) => ({ name: area.name, isPrimary: area.isPrimary ?? area.is_primary })),
+    photo: professional.professional_photo ?? "",
+    areas: professional.areas.map((area) => ({ name: area.name, isPrimary: area.is_primary })),
   }
 }
