@@ -102,32 +102,35 @@ export function ProfessionalProfilePage() {
               <>
                 <h2 className="text-lg font-semibold text-primary">Contact this professional</h2>
                 <div className="mt-4 space-y-3">
-                  <a
-                    href={`tel:${professional.phone.replace(/\s/g, "")}`}
-                    className="interactive-control flex min-h-11 items-center gap-3 rounded-lg bg-surface-low p-3 text-sm font-semibold text-primary hover:bg-surface-high"
-                  >
-                    <Icon name="call" />
-                    <span className="break-all">{professional.phone}</span>
-                  </a>
-                  <a
-                    href={`https://t.me/${professional.telegram.replace("@", "")}`}
-                    className="interactive-control flex min-h-11 items-center gap-3 rounded-lg bg-surface-low p-3 text-sm font-semibold text-primary hover:bg-surface-high"
-                  >
-                    <Icon name="send" />
-                    <span className="break-all">Telegram {professional.telegram}</span>
-                  </a>
+                  {professional.phone ? (
+                    <a
+                      href={`tel:${professional.phone.replace(/\s/g, "")}`}
+                      className="interactive-control flex min-h-11 items-center gap-3 rounded-lg bg-surface-low p-3 text-sm font-semibold text-primary hover:bg-surface-high"
+                    >
+                      <Icon name="call" />
+                      <span className="break-all">{professional.phone}</span>
+                    </a>
+                  ) : null}
+                  {professional.telegram ? (
+                    <a
+                      href={`https://t.me/${professional.telegram.replace("@", "")}`}
+                      className="interactive-control flex min-h-11 items-center gap-3 rounded-lg bg-surface-low p-3 text-sm font-semibold text-primary hover:bg-surface-high"
+                    >
+                      <Icon name="send" />
+                      <span className="break-all">Telegram {professional.telegram}</span>
+                    </a>
+                  ) : null}
+                  {!professional.phone && !professional.telegram ? (
+                    <p className="text-sm text-on-variant">Contact details are unavailable.</p>
+                  ) : null}
                 </div>
               </>
             ) : (
               <>
                 <h2 className="text-lg font-semibold text-primary">Contact this professional</h2>
                 <p className="mt-2 text-sm text-on-variant">
-                  Reach this professional directly using the public contact details below.
+                  Log in or create an account to view this professional’s phone and Telegram details.
                 </p>
-                <div className="mt-4 space-y-3">
-                  <a href={`tel:${professional.phone.replace(/\s/g, "")}`} className="flex min-h-11 items-center rounded-lg bg-surface-low p-3 text-sm font-semibold text-primary">{professional.phone}</a>
-                  {professional.telegram ? <a href={`https://t.me/${professional.telegram.replace("@", "")}`} className="flex min-h-11 items-center rounded-lg bg-surface-low p-3 text-sm font-semibold text-primary">Telegram {professional.telegram}</a> : null}
-                </div>
                 <Link
                   to={`/register?next=/professionals/${professional.id}`}
                   className="interactive-control mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-lg bg-primary-container px-4 py-3 text-sm font-semibold text-on-primary hover:bg-primary"
