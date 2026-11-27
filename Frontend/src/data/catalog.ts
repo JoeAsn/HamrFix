@@ -67,9 +67,12 @@ export type Professional = {
   id: string
   name: string
   profession: string
+  categoryId: CategoryId
   bio: string
   areas: ProfessionalArea[]
   services: ServiceOffering[]
+  yearsExperience?: number
+  languages?: string[]
   phone: string
   telegram: string
   photo: string
@@ -82,6 +85,7 @@ export const PROFESSIONALS: Professional[] = [
     id: "abebe-mekonnen",
     name: "Abebe Mekonnen",
     profession: "Plumber",
+    categoryId: "plumbing",
     bio: "I install and repair residential plumbing systems across eastern and central Addis Ababa. Residents can contact me directly to describe the job and agree on a visit.",
     areas: [{ name: "Bole", isPrimary: true }, { name: "Kirkos", isPrimary: false }, { name: "Yeka", isPrimary: false }, { name: "Lemi Kura", isPrimary: false }],
     services: [
@@ -119,7 +123,7 @@ export const PROFESSIONALS: Professional[] = [
     bio: "I work on household electrical systems, from breaker trips to lighting upgrades. I serve homes in Bole, Kirkos, and surrounding sub-cities.",
     yearsExperience: 9,
     languages: ["Amharic", "English"],
-    areas: ["Bole", "Kirkos", "Arada", "Lideta"],
+    areas: [{ name: "Bole", isPrimary: true }, { name: "Kirkos", isPrimary: false }, { name: "Arada", isPrimary: false }, { name: "Lideta", isPrimary: false }],
     services: [
       {
         id: "breaker",
@@ -150,7 +154,7 @@ export const PROFESSIONALS: Professional[] = [
     bio: "I repair household appliances including refrigerators, washing machines, and cookers. Contact me with the brand and the issue before a house visit.",
     yearsExperience: 7,
     languages: ["Amharic", "English", "Oromo"],
-    areas: ["Bole", "Yeka", "Gullele", "Lemi Kura"],
+    areas: [{ name: "Bole", isPrimary: true }, { name: "Yeka", isPrimary: false }, { name: "Gullele", isPrimary: false }, { name: "Lemi Kura", isPrimary: false }],
     services: [
       {
         id: "fridge",
@@ -181,7 +185,7 @@ export const PROFESSIONALS: Professional[] = [
     bio: "I build and repair doors, cabinets, and household woodwork. I list the services I offer so residents can see whether I can take their job.",
     yearsExperience: 11,
     languages: ["Amharic"],
-    areas: ["Nifas Silk-Lafto", "Kolfe Keranio", "Lideta", "Kirkos"],
+    areas: [{ name: "Nifas Silk-Lafto", isPrimary: true }, { name: "Kolfe Keranio", isPrimary: false }, { name: "Lideta", isPrimary: false }, { name: "Kirkos", isPrimary: false }],
     services: [
       {
         id: "doors",
@@ -211,7 +215,7 @@ export const PROFESSIONALS: Professional[] = [
     bio: "I paint apartments and houses, including surface preparation and finishing. Residents can message me with room count and current wall condition.",
     yearsExperience: 8,
     languages: ["Amharic", "English"],
-    areas: ["Arada", "Addis Ketema", "Gullele", "Lideta"],
+    areas: [{ name: "Arada", isPrimary: true }, { name: "Addis Ketema", isPrimary: false }, { name: "Gullele", isPrimary: false }, { name: "Lideta", isPrimary: false }],
     services: [
       {
         id: "interior",
@@ -252,7 +256,7 @@ export function filterProfessionals(
   const q = query.trim().toLowerCase()
   return PROFESSIONALS.filter((pro) => {
     const matchesCategory = !categoryId || pro.categoryId === categoryId
-    const matchesArea = !area || pro.areas.includes(area as SubCity)
+    const matchesArea = !area || pro.areas.some((professionalArea) => professionalArea.name === area)
     const searchableText = mode === "professionals"
       ? [pro.name]
       : [pro.profession, ...pro.services.map((service) => `${service.name} ${service.description}`)]

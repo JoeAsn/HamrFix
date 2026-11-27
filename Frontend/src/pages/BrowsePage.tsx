@@ -6,12 +6,11 @@ import { ProfessionalCard } from "../components/ProfessionalCard"
 import { CATEGORIES, SUB_CITIES, type DiscoveryMode, type Professional } from "../data/catalog"
 import { browseProfessionals } from "../data/api"
 
-const RESULTS_PER_BATCH = 4
-
 export function BrowsePage() {
   const [params, setParams] = useSearchParams()
   const [filtersOpen, setFiltersOpen] = useState(false)
   const [results, setResults] = useState<Professional[]>([])
+  const [nextCursor, setNextCursor] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
   const query = params.get("q") ?? ""
@@ -24,21 +23,33 @@ export function BrowsePage() {
     history: [null],
   })
   const cursorHistory = cursorState.key === browseStateKey ? cursorState.history : [null]
+  const cursor = cursorHistory[cursorHistory.length - 1]
 
   useEffect(() => {
     let active = true
     setLoading(true)
     setError(false)
-    browseProfessionals(params).then((items) => { if (active) setResults(items) }).catch(() => { if (active) setError(true) }).finally(() => { if (active) setLoading(false) })
+    setNextCursor(null)
+    const requestParams = new URLSearchParams()
+    if (query) requestParams.set("q", query)
+    if (mode === "professionals") requestParams.set("mode", mode)
+    if (category) requestParams.set("category", category)
+    if (area) requestParams.set("area", area)
+    if (cursor) requestParams.set("cursor", cursor)
+    browseProfessionals(requestParams)
+      .then((page) => {
+        if (active) {
+          setResults(page.professionals)
+          setNextCursor(page.nextCursor)
+        }
+      })
+      .catch(() => { if (active) setError(true) })
+      .finally(() => { if (active) setLoading(false) })
     return () => { active = false }
-  }, [query, mode, category, area])
-  const cursor = cursorHistory[cursorHistory.length - 1]
-  const startIndex = cursor
-    ? Math.max(0, results.findIndex((professional) => professional.id === cursor) + 1)
-    : 0
-  const visibleProfessionals = results.slice(startIndex, startIndex + RESULTS_PER_BATCH)
+  }, [query, mode, category, area, cursor])
+  const visibleProfessionals = results
   const hasPreviousBatch = cursorHistory.length > 1
-  const hasNextBatch = startIndex + RESULTS_PER_BATCH < results.length
+  const hasNextBatch = Boolean(nextCursor)
   const activeFilterCount = [mode === "services" ? category : "", area].filter(Boolean).length
 
   function updateFilter(key: string, value: string) {
@@ -68,10 +79,7 @@ export function BrowsePage() {
 
   function goToNextBatch() {
     if (!hasNextBatch) return
-    const nextCursor = visibleProfessionals.at(-1)?.id
-    if (nextCursor) {
-      setCursorState({ key: browseStateKey, history: [...cursorHistory, nextCursor] })
-    }
+    setCursorState({ key: browseStateKey, history: [...cursorHistory, nextCursor] })
   }
 
   function goToPreviousBatch() {
@@ -139,7 +147,7 @@ export function BrowsePage() {
             ) : null}
           </button>
           <p className="text-sm text-on-variant" aria-live="polite">
-            {results.length} {results.length === 1 ? "professional" : "professionals"}
+            Showing {results.length} {results.length === 1 ? "professional" : "professionals"}
           </p>
         </div>
 
@@ -208,7 +216,7 @@ export function BrowsePage() {
             <button
               type="button"
               className="interactive-control inline-flex min-h-11 items-center justify-center gap-1 rounded-lg border border-outline-variant/50 px-3 text-sm font-semibold text-primary hover:bg-surface-low disabled:cursor-not-allowed disabled:opacity-40"
-              disabled={!hasPreviousBatch}
+              disabled={!hasPreviousBatch || loading}
               onClick={goToPreviousBatch}
             >
               <Icon name="chevron_left" />
@@ -217,7 +225,7 @@ export function BrowsePage() {
             <button
               type="button"
               className="interactive-control inline-flex min-h-11 items-center justify-center gap-1 rounded-lg border border-outline-variant/50 px-3 text-sm font-semibold text-primary hover:bg-surface-low disabled:cursor-not-allowed disabled:opacity-40"
-              disabled={!hasNextBatch}
+              disabled={!hasNextBatch || loading}
               onClick={goToNextBatch}
             >
               Next

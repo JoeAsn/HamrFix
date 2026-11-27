@@ -61,7 +61,7 @@ async function browse_professionals(queryValues) {
 
         -- Cursor pagination
         AND (
-          $5::integer IS NULL
+          $5::bigint IS NULL
           OR u.id < $5
         )
 
@@ -76,6 +76,14 @@ async function browse_professionals(queryValues) {
   return result.rows;
 }
 export { browse_professionals };
+
+export async function find_category_by_name(name) {
+  const result = await pool.query(
+    "SELECT id, name FROM categories WHERE name = $1",
+    [name]
+  );
+  return result.rows[0] ?? null;
+}
 
 export async function browse_services(professionals_id) {
   if (!professionals_id.length) return [];

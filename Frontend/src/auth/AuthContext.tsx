@@ -1,5 +1,5 @@
 import { createContext, useContext, useMemo, useState, type ReactNode } from "react"
-import { PROFESSIONALS } from "../data/catalog"
+import { PROFESSIONALS, type SubCity } from "../data/catalog"
 import type { AccountView, ProfessionalListing, Session } from "./types"
 
 type AuthContextValue = {
@@ -78,7 +78,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             name: matchingPro.name,
             email,
             phone: matchingPro.phone,
-            area: matchingPro.areas[0] ?? "Bole",
+            area: (matchingPro.areas[0]?.name as SubCity | undefined) ?? "Bole",
             photo: matchingPro.photo,
             activeView: "professional",
             professional: {
@@ -88,7 +88,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               phone: matchingPro.phone,
               telegram: matchingPro.telegram,
               photo: matchingPro.photo,
-              areas: matchingPro.areas,
+              areas: matchingPro.areas.map((area) => area.name as SubCity),
               services: matchingPro.services,
             },
           })

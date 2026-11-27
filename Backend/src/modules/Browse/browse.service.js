@@ -1,18 +1,39 @@
-import { browse_professionals, browse_locations, browse_services } from "./browse.repository.js";
+import {
+  browse_professionals,
+  browse_locations,
+  browse_services,
+  find_category_by_name,
+} from "./browse.repository.js";
 
 async function browse_service({ filters = {}, pagination = {} } = {}) {
+  const category = filters.category
+    ? await find_category_by_name(filters.category)
+    : null;
+  if (filters.category && !category) {
+    return { professionals: [], nextCursor: null };
+  }
+
+  const page_limit = pagination.limit ?? 10;
   // Keep these positions in sync with the placeholders in the repository query.
   const queryValues = [
     filters.name ?? null,
     filters.service ?? null,
-    filters.category ?? null,
+    category ? String(category.id) : null,
     filters.location ?? null,
     pagination.cursor?.id ?? null,
-    pagination.limit ?? 10,
+    page_limit + 1,
   ];
 
-  const professionals = await browse_professionals(queryValues);
-  if (!professionals.length) return [];
+  const fetched_professionals = await browse_professionals(queryValues);
+  const has_more = fetched_professionals.length > page_limit;
+  const professionals = fetched_professionals.slice(0, page_limit);
+  const last_professional = professionals.at(-1);
+  const next_cursor =
+    has_more && last_professional
+      ? Buffer.from(JSON.stringify({ id: String(last_professional.id) })).toString("base64")
+      : null;
+  if (!professionals.length) return { professionals: [], nextCursor: null };
+
   const professionals_id = [] ;
   professionals.forEach(professional => {
     professionals_id.push(professional.id)
@@ -33,7 +54,7 @@ async function browse_service({ filters = {}, pagination = {} } = {}) {
     profile.areas.push({ name: location.name, isPrimary: location.is_primary })
   })
 
-  return [...professionalsMap.values()] ;
+  return { professionals: [...professionalsMap.values()], nextCursor: next_cursor };
 }
 
 export default browse_service;

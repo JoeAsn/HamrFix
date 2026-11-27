@@ -8,19 +8,32 @@
 
 BEGIN;
 
+-- Reset existing fixture data before re-seeding.
+-- Delete dependent rows first to respect the foreign-key relationships.
+TRUNCATE TABLE
+    professional_service_areas,
+    professional_services,
+    professional_profiles,
+    users,
+    services,
+    categories,
+    locations
+RESTART IDENTITY CASCADE;
+
 -- 1. Locations
 INSERT INTO locations (name)
 VALUES
     ('Bole'),
-    ('Megenagna'),
-    ('Piazza'),
-    ('Kazanchis'),
-    ('CMC'),
-    ('Ayat'),
-    ('Sar Bet'),
-    ('Mexico'),
+    ('Kirkos'),
+    ('Arada'),
+    ('Yeka'),
     ('Lideta'),
-    ('Gerji')
+    ('Nifas Silk-Lafto'),
+    ('Kolfe Keranio'),
+    ('Addis Ketema'),
+    ('Gullele'),
+    ('Akaky Kaliti'),
+    ('Lemi Kura')
 ON CONFLICT (name) DO NOTHING;
 
 -- 2. Categories (matching the six frontend categories)
@@ -66,28 +79,28 @@ ON CONFLICT (category_id, name) DO NOTHING;
 INSERT INTO users (name, email, password_hash, phone, photo, location_id)
 VALUES
     ('Abebe Kebede', 'abebe@example.com', 'mock_hash_001', '0911000001', NULL, (SELECT id FROM locations WHERE name = 'Bole')),
-    ('Dawit Alemu', 'dawit@example.com', 'mock_hash_002', '0911000002', NULL, (SELECT id FROM locations WHERE name = 'Megenagna')),
-    ('Hana Tesfaye', 'hana@example.com', 'mock_hash_003', '0911000003', NULL, (SELECT id FROM locations WHERE name = 'Piazza')),
-    ('Mekdes Girma', 'mekdes@example.com', 'mock_hash_004', '0911000004', NULL, (SELECT id FROM locations WHERE name = 'Kazanchis')),
-    ('Samuel Bekele', 'samuel@example.com', 'mock_hash_005', '0911000005', NULL, (SELECT id FROM locations WHERE name = 'CMC')),
-    ('Yonas Tadesse', 'yonas@example.com', 'mock_hash_006', '0911000006', NULL, (SELECT id FROM locations WHERE name = 'Ayat')),
-    ('Meron Worku', 'meron@example.com', 'mock_hash_007', '0911000007', NULL, (SELECT id FROM locations WHERE name = 'Sar Bet')),
-    ('Fitsum Haile', 'fitsum@example.com', 'mock_hash_008', '0911000008', NULL, (SELECT id FROM locations WHERE name = 'Mexico')),
+    ('Dawit Alemu', 'dawit@example.com', 'mock_hash_002', '0911000002', NULL, (SELECT id FROM locations WHERE name = 'Kirkos')),
+    ('Hana Tesfaye', 'hana@example.com', 'mock_hash_003', '0911000003', NULL, (SELECT id FROM locations WHERE name = 'Arada')),
+    ('Mekdes Girma', 'mekdes@example.com', 'mock_hash_004', '0911000004', NULL, (SELECT id FROM locations WHERE name = 'Yeka')),
+    ('Samuel Bekele', 'samuel@example.com', 'mock_hash_005', '0911000005', NULL, (SELECT id FROM locations WHERE name = 'Nifas Silk-Lafto')),
+    ('Yonas Tadesse', 'yonas@example.com', 'mock_hash_006', '0911000006', NULL, (SELECT id FROM locations WHERE name = 'Kolfe Keranio')),
+    ('Meron Worku', 'meron@example.com', 'mock_hash_007', '0911000007', NULL, (SELECT id FROM locations WHERE name = 'Addis Ketema')),
+    ('Fitsum Haile', 'fitsum@example.com', 'mock_hash_008', '0911000008', NULL, (SELECT id FROM locations WHERE name = 'Gullele')),
     ('Betelhem Assefa', 'betelhem@example.com', 'mock_hash_009', '0911000009', NULL, (SELECT id FROM locations WHERE name = 'Lideta')),
-    ('Henok Solomon', 'henok@example.com', 'mock_hash_010', '0911000010', NULL, (SELECT id FROM locations WHERE name = 'Gerji')),
+    ('Henok Solomon', 'henok@example.com', 'mock_hash_010', '0911000010', NULL, (SELECT id FROM locations WHERE name = 'Akaky Kaliti')),
     ('Rahel Getachew', 'rahel@example.com', 'mock_hash_011', '0911000011', NULL, (SELECT id FROM locations WHERE name = 'Bole')),
-    ('Kebede Mulu', 'kebede@example.com', 'mock_hash_012', '0911000012', NULL, (SELECT id FROM locations WHERE name = 'Megenagna')),
-    ('Elias Worku', 'elias@example.com', 'mock_hash_013', '0911000013', NULL, (SELECT id FROM locations WHERE name = 'Piazza')),
-    ('Selamawit Fikru', 'selam@example.com', 'mock_hash_014', '0911000014', NULL, (SELECT id FROM locations WHERE name = 'Kazanchis')),
-    ('Biruk Assefa', 'biruk@example.com', 'mock_hash_015', '0911000015', NULL, (SELECT id FROM locations WHERE name = 'CMC')),
+    ('Kebede Mulu', 'kebede@example.com', 'mock_hash_012', '0911000012', NULL, (SELECT id FROM locations WHERE name = 'Kirkos')),
+    ('Elias Worku', 'elias@example.com', 'mock_hash_013', '0911000013', NULL, (SELECT id FROM locations WHERE name = 'Arada')),
+    ('Selamawit Fikru', 'selam@example.com', 'mock_hash_014', '0911000014', NULL, (SELECT id FROM locations WHERE name = 'Yeka')),
+    ('Biruk Assefa', 'biruk@example.com', 'mock_hash_015', '0911000015', NULL, (SELECT id FROM locations WHERE name = 'Nifas Silk-Lafto')),
     ('Mihret Abebe', 'mihret@example.com', 'mock_hash_016', '0911000016', NULL, (SELECT id FROM locations WHERE name = 'Bole')),
-    ('Daniel Girma', 'daniel@example.com', 'mock_hash_017', '0911000017', NULL, (SELECT id FROM locations WHERE name = 'Ayat')),
-    ('Eden Tadesse', 'eden@example.com', 'mock_hash_018', '0911000018', NULL, (SELECT id FROM locations WHERE name = 'Gerji')),
-    ('Nahom Kebede', 'nahom@example.com', 'mock_hash_019', '0911000019', NULL, (SELECT id FROM locations WHERE name = 'Piazza')),
-    ('Saron Bekele', 'saron@example.com', 'mock_hash_020', '0911000020', NULL, (SELECT id FROM locations WHERE name = 'Sar Bet'))
+    ('Daniel Girma', 'daniel@example.com', 'mock_hash_017', '0911000017', NULL, (SELECT id FROM locations WHERE name = 'Kolfe Keranio')),
+    ('Eden Tadesse', 'eden@example.com', 'mock_hash_018', '0911000018', NULL, (SELECT id FROM locations WHERE name = 'Akaky Kaliti')),
+    ('Nahom Kebede', 'nahom@example.com', 'mock_hash_019', '0911000019', NULL, (SELECT id FROM locations WHERE name = 'Arada')),
+    ('Saron Bekele', 'saron@example.com', 'mock_hash_020', '0911000020', NULL, (SELECT id FROM locations WHERE name = 'Addis Ketema'))
 ON CONFLICT DO NOTHING;
 
--- 5. Professional profiles: 12 published and 3 draft.
+-- 5. Professional profiles: all seeded profiles are published for search testing.
 INSERT INTO professional_profiles
     (user_id, profession, overview, professional_photo, contact_phone, telegram, status)
 SELECT
@@ -106,9 +119,9 @@ FROM (
         ('henok@example.com', 'Appliance Technician', 'Domestic appliance troubleshooting and repair.', '@henok_repair', 'published'),
         ('rahel@example.com', 'Painter', 'Professional wall finishing and residential painting.', '@rahel_painting', 'published'),
         ('kebede@example.com', 'Cleaning Specialist', 'Deep cleaning and post-construction cleaning.', '@kebede_cleaning', 'published'),
-        ('elias@example.com', 'Plumber', 'Residential plumbing and water system maintenance.', '@elias_plumbing', 'draft'),
-        ('selam@example.com', 'Electrician', 'Electrical repair and installation.', '@selam_electric', 'draft'),
-        ('biruk@example.com', 'Carpenter', 'Custom furniture and home improvement.', '@biruk_carpentry', 'draft')
+        ('elias@example.com', 'Plumber', 'Residential plumbing and water system maintenance.', '@elias_plumbing', 'published'),
+        ('selam@example.com', 'Electrician', 'Electrical repair and installation.', '@selam_electric', 'published'),
+        ('biruk@example.com', 'Carpenter', 'Custom furniture and home improvement.', '@biruk_carpentry', 'published')
 ) AS v(email, profession, overview, telegram, status)
 JOIN users u ON u.email = v.email
 ON CONFLICT (user_id) DO UPDATE SET
@@ -126,31 +139,31 @@ SELECT u.id, l.id, v.is_primary
 FROM (
     VALUES
         ('abebe@example.com', 'Bole', TRUE),
-        ('abebe@example.com', 'Gerji', FALSE),
-        ('dawit@example.com', 'Megenagna', TRUE),
-        ('dawit@example.com', 'CMC', FALSE),
-        ('hana@example.com', 'Piazza', TRUE),
+        ('abebe@example.com', 'Lemi Kura', FALSE),
+        ('dawit@example.com', 'Kirkos', TRUE),
+        ('dawit@example.com', 'Bole', FALSE),
+        ('hana@example.com', 'Arada', TRUE),
         ('hana@example.com', 'Lideta', FALSE),
-        ('mekdes@example.com', 'Kazanchis', TRUE),
-        ('samuel@example.com', 'CMC', TRUE),
-        ('samuel@example.com', 'Ayat', FALSE),
-        ('samuel@example.com', 'Gerji', FALSE),
-        ('yonas@example.com', 'Ayat', TRUE),
-        ('yonas@example.com', 'Megenagna', FALSE),
-        ('meron@example.com', 'Sar Bet', TRUE),
+        ('mekdes@example.com', 'Yeka', TRUE),
+        ('samuel@example.com', 'Nifas Silk-Lafto', TRUE),
+        ('samuel@example.com', 'Akaky Kaliti', FALSE),
+        ('samuel@example.com', 'Lemi Kura', FALSE),
+        ('yonas@example.com', 'Kolfe Keranio', TRUE),
+        ('yonas@example.com', 'Kirkos', FALSE),
+        ('meron@example.com', 'Addis Ketema', TRUE),
         ('meron@example.com', 'Bole', FALSE),
-        ('fitsum@example.com', 'Mexico', TRUE),
-        ('fitsum@example.com', 'Piazza', FALSE),
+        ('fitsum@example.com', 'Gullele', TRUE),
+        ('fitsum@example.com', 'Arada', FALSE),
         ('betelhem@example.com', 'Lideta', TRUE),
-        ('henok@example.com', 'Gerji', TRUE),
-        ('henok@example.com', 'CMC', FALSE),
+        ('henok@example.com', 'Akaky Kaliti', TRUE),
+        ('henok@example.com', 'Nifas Silk-Lafto', FALSE),
         ('rahel@example.com', 'Bole', TRUE),
-        ('rahel@example.com', 'Kazanchis', FALSE),
-        ('kebede@example.com', 'Megenagna', TRUE),
-        ('kebede@example.com', 'Ayat', FALSE),
-        ('elias@example.com', 'Piazza', TRUE),
-        ('selam@example.com', 'Kazanchis', TRUE),
-        ('biruk@example.com', 'CMC', TRUE)
+        ('rahel@example.com', 'Yeka', FALSE),
+        ('kebede@example.com', 'Kirkos', TRUE),
+        ('kebede@example.com', 'Kolfe Keranio', FALSE),
+        ('elias@example.com', 'Arada', TRUE),
+        ('selam@example.com', 'Yeka', TRUE),
+        ('biruk@example.com', 'Nifas Silk-Lafto', TRUE)
 ) AS v(email, location_name, is_primary)
 JOIN users u ON u.email = v.email
 JOIN locations l ON l.name = v.location_name
