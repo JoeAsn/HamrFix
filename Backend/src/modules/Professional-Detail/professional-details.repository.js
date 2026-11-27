@@ -13,7 +13,7 @@ export default async function proDetailRepo(professionalId) {
       };
     }
     const additinalInfo = await pool.query(
-      `SELECT profession , overview  , contact_phone , telegram , professional_photo FROM professional_profiles WHERE user_id  = $1`,
+      `SELECT profession , overview  , contact_phone , telegram , professional_photo FROM professional_profiles WHERE user_id  = $1 AND status = 'published'`,
       [professionalId],
     );
     const services = await pool.query(
@@ -25,29 +25,25 @@ export default async function proDetailRepo(professionalId) {
       `SELECT name , is_primary FROM locations JOIN professional_service_areas ON professional_service_areas.location_id = locations.id WHERE professional_id = $1`,
       [professionalId],
     );
-    console.log(serviceAreas.rowCount , services.rowCount , professionalName.rowCount)
-    if (
-      (services.rowCount < 1 || additinalInfo.rowCount < 1 ||
-      serviceAreas.rowCount < 1)
-    ) {
+    if (additinalInfo.rowCount < 1) {
       return {
         success: false,
-        message: "could not get the information of the professional.",
+        message: "the published professional profile does not exist.",
       };
     }
     Object.assign(
       professionalInfo,
       professionalName.rows[0],
       additinalInfo.rows[0],
-      { servies: services.rows },
+      { services: services.rows },
       { areas: serviceAreas.rows },
     );
     return professionalInfo ;
   } catch (error) {
-    console.log(error.message);
+    console.error("Failed to fetch professional details:", error);
     return {
       success: false,
-      message: `${error.message}  has happend while fetching the user with this ${professionalId}`,
+      message: "Could not fetch professional details.",
     };
   }
 }
